@@ -56,20 +56,41 @@
   tick();
   setInterval(tick, 1000);
 
-  /* ─────────────── Smooth scroll (Lenis) ─────────────── */
+  /* ─────────────── Background music ─────────────── */
 
-  let lenis = null;
-  if (!prefersReduced && window.Lenis) {
-    lenis = new Lenis({
-      duration: 1.25,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      syncTouch: true,
-      touchMultiplier: 1.6,
-    });
-  }
+  const audio = document.getElementById("melody");
+  const musicBtn = document.getElementById("music-btn");
+  let musicWanted = true;
 
-  /* ─────────────── GSAP setup ─────────────── */
+  const updateMusicBtn = () => {
+    musicBtn.classList.toggle("is-off", !musicWanted);
+    musicBtn.classList.toggle("is-playing", !audio.paused);
+    musicBtn.setAttribute("aria-pressed", String(musicWanted));
+    musicBtn.setAttribute("aria-label", musicWanted ? "Pause music" : "Play music");
+  };
+
+  const tryPlayMusic = () => {
+    if (!musicWanted) return;
+    audio.volume = 0.55;
+    audio.play().then(updateMusicBtn).catch(() => {});
+  };
+
+  tryPlayMusic(); // browsers may block until first touch — retried below
+  ["pointerdown", "touchstart", "keydown", "scroll"].forEach((ev) =>
+    window.addEventListener(ev, tryPlayMusic, { once: true, passive: true })
+  );
+
+  musicBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    musicWanted = !musicWanted;
+    if (musicWanted) tryPlayMusic();
+    else audio.pause();
+    updateMusicBtn();
+  });
+  audio.addEventListener("play", updateMusicBtn);
+  audio.addEventListener("pause", updateMusicBtn);
+
+  /* ─────────────── GSAP setup (scroll is native CSS snap) ─────────────── */
 
   if (!window.gsap || !window.ScrollTrigger) {
     // animation libs unavailable — show all content statically
@@ -78,22 +99,32 @@
   }
   gsap.registerPlugin(ScrollTrigger);
 
-  if (lenis) {
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((t) => lenis.raf(t * 1000));
-    gsap.ticker.lagSmoothing(0);
-  }
-
-  /* dot navigation clicks through Lenis */
   document.querySelectorAll(".dots__dot").forEach((dot) => {
     dot.addEventListener("click", (e) => {
       e.preventDefault();
       const el = document.querySelector(dot.getAttribute("href"));
-      if (!el) return;
-      if (lenis) lenis.scrollTo(el, { duration: 1.6 });
-      else el.scrollIntoView({ behavior: "smooth" });
+      if (el) el.scrollIntoView({ behavior: "smooth" });
     });
   });
+
+  /* one wheel gesture = exactly one page (touch flicks already snap natively) */
+  const panels = Array.from(document.querySelectorAll(".panel"));
+  let paging = false;
+  window.addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      if (paging || Math.abs(e.deltaY) < 8) return;
+      const dir = e.deltaY > 0 ? 1 : -1;
+      const idx = Math.round(window.scrollY / window.innerHeight);
+      const next = Math.max(0, Math.min(panels.length - 1, idx + dir));
+      if (next === idx) return;
+      paging = true;
+      panels[next].scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => (paging = false), 850);
+    },
+    { passive: false }
+  );
 
   if (prefersReduced) {
     // Show everything statically and stop here.
@@ -106,28 +137,31 @@
   const layers = {};
   document.querySelectorAll(".backdrop__layer").forEach((l) => (layers[l.dataset.key] = l));
 
+  // every page has a trigger and they all switch at the 50% line, so the
+  // colour changes exactly when a page takes over — identical up or down
   const themes = [
-    { sel: "#hero",    key: "hero" },
-    { sel: "#mandvo",  key: "mandvo" },
-    { sel: "#haldi",   key: "haldi" },
-    { sel: "#sangeet", key: "sangeet" },
-    { sel: "#lagan",   key: "lagan" },
-    { sel: "#venue",   key: "venue" },
+    { sel: "#hero",      key: "hero",    burst: null },
+    { sel: "#blessings", key: "hero",    burst: null },
+    { sel: "#mandvo",    key: "mandvo",  burst: "mandvo" },
+    { sel: "#haldi",     key: "haldi",   burst: "haldi" },
+    { sel: "#sangeet",   key: "sangeet", burst: "sangeet" },
+    { sel: "#lagan",     key: "lagan",   burst: "lagan" },
+    { sel: "#venue",     key: "venue",   burst: null },
   ];
 
   function showLayer(key) {
     Object.entries(layers).forEach(([k, el]) => {
-      gsap.to(el, { opacity: k === key ? 1 : 0, duration: 1.2, ease: "power2.out", overwrite: "auto" });
+      gsap.to(el, { opacity: k === key ? 1 : 0, duration: 0.9, ease: "power2.out", overwrite: "auto" });
     });
   }
 
-  themes.forEach(({ sel, key }) => {
+  themes.forEach(({ sel, key, burst }) => {
     ScrollTrigger.create({
       trigger: sel,
-      start: "top 70%",
-      end: "bottom 70%",
-      onEnter: () => showLayer(key),
-      onEnterBack: () => showLayer(key),
+      start: "top 50%",
+      end: "bottom 50%",
+      onEnter: () => { showLayer(key); if (burst) spawnBurst(burst); },
+      onEnterBack: () => { showLayer(key); if (burst) spawnBurst(burst); },
     });
   });
 
@@ -192,7 +226,7 @@
 
   /* ─────────────── Generic reveals ─────────────── */
 
-  document.querySelectorAll(".intro .reveal, .family .reveal, .venue .reveal").forEach((el) => {
+  document.querySelectorAll(".blessings .reveal, .venue .reveal").forEach((el) => {
     gsap.fromTo(
       el,
       { y: 36, opacity: 0 },
@@ -392,6 +426,7 @@
 
   const sectionThemeMap = [
     { sel: "#hero", key: "hero" },
+    { sel: "#blessings", key: "hero" },
     { sel: "#mandvo", key: "mandvo" },
     { sel: "#haldi", key: "haldi" },
     { sel: "#sangeet", key: "sangeet" },
@@ -402,12 +437,134 @@
   sectionThemeMap.forEach(({ sel, key }) => {
     ScrollTrigger.create({
       trigger: sel,
-      start: "top 70%",
-      end: "bottom 70%",
+      start: "top 50%",
+      end: "bottom 50%",
       onEnter: () => setTheme(PARTICLE_THEMES[key]),
       onEnterBack: () => setTheme(PARTICLE_THEMES[key]),
     });
   });
+
+  /* ─────────────── Entrance bursts per event ─────────────── */
+
+  const BURST_THEMES = {
+    mandvo:  { kind: "petal",    colors: ["#ff9d2e", "#ffb84d", "#f4c542", "#e8862a", "#fff3d6"], count: 44 },
+    haldi:   { kind: "splash",   colors: ["#b06ee0", "#f4c542", "#ff6fa5", "#4dd0c4", "#9fe06e", "#8e4fd1"], count: 56 },
+    sangeet: { kind: "firework", colors: ["#ffd76e", "#fff3c4", "#ff9d5c", "#f7e6a2"], shells: 3 },
+    lagan:   { kind: "petal",    colors: ["#f2657a", "#f298a3", "#fbd9dc", "#e63e57", "#ffffff"], count: 48 },
+  };
+
+  const burstParticles = [];
+  const lastBurst = {};
+
+  function spawnBurst(key) {
+    const t = BURST_THEMES[key];
+    if (!t) return;
+    const now = Date.now();
+    if (lastBurst[key] && now - lastBurst[key] < 1500) return;
+    lastBurst[key] = now;
+
+    if (t.kind === "firework") {
+      for (let s = 0; s < t.shells; s++) {
+        const cx = W * (0.22 + Math.random() * 0.56);
+        const cy = H * (0.16 + Math.random() * 0.3);
+        const delay = s * 320;
+        const color = t.colors[(Math.random() * t.colors.length) | 0];
+        for (let i = 0; i < 30; i++) {
+          const a = (Math.PI * 2 * i) / 30 + Math.random() * 0.25;
+          const sp = 2.4 + Math.random() * 4.2;
+          burstParticles.push({
+            kind: "spark", delay,
+            x: cx, y: cy,
+            vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+            g: 0.045, drag: 0.975,
+            r: 1.2 + Math.random() * 1.8,
+            life: 1, decay: 0.011 + Math.random() * 0.008,
+            tw: Math.random() * Math.PI * 2, tws: 0.25,
+            color,
+          });
+        }
+      }
+      return;
+    }
+
+    const cx = W / 2;
+    const cy = H * 0.4;
+    for (let i = 0; i < t.count; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const sp = 2.5 + Math.random() * 7;
+      const color = t.colors[(Math.random() * t.colors.length) | 0];
+      if (t.kind === "splash") {
+        burstParticles.push({
+          kind: "blob", delay: Math.random() * 120,
+          x: cx + (Math.random() - 0.5) * 60, y: cy + (Math.random() - 0.5) * 60,
+          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.2,
+          g: 0.09, drag: 0.982,
+          r: 3 + Math.random() * 7,
+          life: 1, decay: 0.009 + Math.random() * 0.007,
+          color,
+        });
+      } else {
+        burstParticles.push({
+          kind: "bpetal", delay: Math.random() * 150,
+          x: cx + (Math.random() - 0.5) * 70, y: cy + (Math.random() - 0.5) * 70,
+          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.5,
+          g: 0.075, drag: 0.984,
+          w: 4.5 + Math.random() * 6, h: 3 + Math.random() * 3.5,
+          rot: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 0.25,
+          life: 1, decay: 0.008 + Math.random() * 0.006,
+          color,
+        });
+      }
+    }
+  }
+
+  function drawBursts() {
+    const now = Date.now();
+    for (let i = burstParticles.length - 1; i >= 0; i--) {
+      const p = burstParticles[i];
+      if (p.delay > 0) { p.delay -= 16.7; continue; }
+      p.vx *= p.drag;
+      p.vy = p.vy * p.drag + p.g;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= p.decay;
+      if (p.life <= 0 || p.y > H + 30) { burstParticles.splice(i, 1); continue; }
+
+      if (p.kind === "spark") {
+        p.tw += p.tws;
+        const a = p.life * (0.6 + 0.4 * Math.sin(p.tw));
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3.2);
+        g.addColorStop(0, p.color);
+        g.addColorStop(1, "transparent");
+        ctx.globalAlpha = Math.max(0, a);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 3.2, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.kind === "blob") {
+        ctx.globalAlpha = Math.max(0, p.life * 0.85);
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+        g.addColorStop(0, p.color);
+        g.addColorStop(1, "transparent");
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        p.rot += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = Math.max(0, p.life * 0.9);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, p.w, p.h, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
 
   let rafPaused = document.hidden;
   document.addEventListener("visibilitychange", () => {
@@ -462,6 +619,7 @@
       }
     }
     ctx.globalAlpha = 1;
+    drawBursts();
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);

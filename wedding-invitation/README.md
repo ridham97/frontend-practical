@@ -27,11 +27,14 @@ Venue: **OTB Rajkot**, Nyari Dam 1 Road, Kalavad Road, Rajkot, Gujarat 360005.
   specks (Haldi), golden bokeh (Sanji), rose petals (Lagan).
 - **Living decor** — every event scene is a looping ambient video (Higgsfield
   image-to-video): swaying leaves, rippling drapes, twinkling lights.
-- **Buttery smooth scrolling** via Lenis, live countdown, bride & groom family
-  cards, section progress dots, and a Get Directions link to the venue.
+- **Page snapping** — one swipe/scroll moves exactly one full-screen page
+  (CSS scroll-snap + wheel pager); entrance bursts per event (marigold
+  shower, holi colour splash, firecrackers, rose petals).
+- **Background melody** with a floating mute button, live countdown, bride &
+  groom family cards, section progress dots, and a Get Directions link.
 - **Cinematic 4K artwork** (3072×5504) generated with Higgsfield AI
   (Nano Banana Pro), one bespoke scene per event.
-- **Fully self-contained** — GSAP, Lenis and all fonts (including the Gujarati
+- **Fully self-contained** — GSAP and all fonts (including the Gujarati
   Baloo Bhai 2 subset) are vendored locally; no CDN required.
 - Respects `prefers-reduced-motion` and degrades gracefully if JS fails.
 

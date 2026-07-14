@@ -40,13 +40,25 @@
 
   <!-- ═══════════════ PROGRESS DOTS ═══════════════ -->
   <nav class="dots" id="dots" aria-label="Sections">
-    <a href="#hero"    class="dots__dot" data-label="Home"></a>
-    <a href="#mandvo"  class="dots__dot" data-label="Mandvo"></a>
-    <a href="#haldi"   class="dots__dot" data-label="Haldi"></a>
-    <a href="#sangeet" class="dots__dot" data-label="Sanji"></a>
-    <a href="#lagan"   class="dots__dot" data-label="Lagan"></a>
-    <a href="#venue"   class="dots__dot" data-label="Venue"></a>
+    <a href="#hero"      class="dots__dot" data-label="Home"></a>
+    <a href="#blessings" class="dots__dot" data-label="Family"></a>
+    <a href="#mandvo"    class="dots__dot" data-label="Mandvo"></a>
+    <a href="#haldi"     class="dots__dot" data-label="Haldi"></a>
+    <a href="#sangeet"   class="dots__dot" data-label="Sanji"></a>
+    <a href="#lagan"     class="dots__dot" data-label="Lagan"></a>
+    <a href="#venue"     class="dots__dot" data-label="Venue"></a>
   </nav>
+
+  <!-- ═══════════════ MUSIC ═══════════════ -->
+  <audio id="melody" src="audio/melody.mp3" loop preload="auto"></audio>
+  <button class="music-btn" id="music-btn" aria-label="Pause music" aria-pressed="true">
+    <svg class="music-btn__on" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 18V5l11-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="17" cy="16" r="3" />
+    </svg>
+    <svg class="music-btn__off" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 18V5l11-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="17" cy="16" r="3" /><line x1="2" y1="2" x2="22" y2="22" />
+    </svg>
+  </button>
 
   <main id="smooth-content">
 
@@ -124,40 +136,38 @@
       </div>
     </section>
 
-    <!-- ═══════════════ INTRO ═══════════════ -->
-    <section class="intro">
-      <div class="intro__inner">
-        <span class="intro__flourish reveal">❦</span>
-        <p class="intro__lead reveal">Two hearts, two families</p>
-        <p class="intro__text reveal">one beautiful journey begins</p>
-        <span class="intro__rule reveal"><i>◆</i></span>
-        <p class="intro__sub reveal">Join us across two days of rituals, colours, music &amp; love</p>
-        <div class="intro__events reveal">
-          <span>માંડવો</span><i>·</i><span>હળદી</span><i>·</i><span>સાંજી</span><i>·</i><span>લગ્ન</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════ FAMILY ═══════════════ -->
-    <section class="family panel" id="family">
-      <div class="family__inner">
-        <p class="family__blessing reveal">With the blessings of our families</p>
+    <!-- ═══════════════ BLESSINGS (intro + family) ═══════════════ -->
+    <section class="blessings panel" id="blessings">
+      <div class="blessings__inner">
+        <p class="blessings__guj reveal">અમારા પરિવારના આશીર્વાદ સહ</p>
+        <p class="blessings__lead reveal">Two hearts, two families</p>
+        <p class="blessings__script reveal">one beautiful journey begins</p>
 
         <article class="family__card reveal">
+          <span class="family__ornament family__ornament--top">✦ ❦ ✦</span>
           <span class="family__role">The Bride</span>
           <h3 class="family__name">Amee</h3>
           <p class="family__rel">D/O Kishorbhai &amp; Seemaben</p>
-          <p class="family__surname">Kasondra</p>
+          <p class="family__surname"><i></i>Kasondra<i></i></p>
         </article>
 
-        <span class="family__knot reveal">♥</span>
+        <div class="family__knot reveal">
+          <span class="family__knot-line"></span>
+          <span class="family__knot-heart">♥</span>
+          <span class="family__knot-line"></span>
+        </div>
 
         <article class="family__card reveal">
+          <span class="family__ornament family__ornament--top">✦ ❦ ✦</span>
           <span class="family__role">The Groom</span>
           <h3 class="family__name">Ridham</h3>
           <p class="family__rel">S/O Rameshbhai &amp; Hansaben</p>
-          <p class="family__surname">Sherathiya</p>
+          <p class="family__surname"><i></i>Sherathiya<i></i></p>
         </article>
+
+        <div class="blessings__events reveal">
+          <span>માંડવો</span><i>·</i><span>હળદી</span><i>·</i><span>સાંજી</span><i>·</i><span>લગ્ન</span>
+        </div>
       </div>
     </section>
 
@@ -320,23 +330,21 @@
           Get Directions
         </a>
         <p class="venue__note reveal">All four events will be held at the same venue.</p>
+
+        <div class="venue__closing reveal">
+          <span class="venue__closing-rule"></span>
+          <p class="footer__guj">આપના આશીર્વાદ એ જ અમારી શોભા</p>
+          <p class="footer__text">Your presence &amp; blessings are the greatest gift.</p>
+          <h3 class="footer__names">Amee <em>♥</em> Ridham</h3>
+          <p class="footer__date">28 &amp; 29 January 2027 — Rajkot</p>
+        </div>
       </div>
     </section>
-
-    <!-- ═══════════════ FOOTER ═══════════════ -->
-    <footer class="footer">
-      <p class="footer__guj">આપના આશીર્વાદ એ જ અમારી શોભા</p>
-      <p class="footer__text">Your presence &amp; blessings are the greatest gift.</p>
-      <h3 class="footer__names">Amee <em>♥</em> Ridham</h3>
-      <p class="footer__date">28 &amp; 29 January 2027 — Rajkot</p>
-      <span class="footer__flourish">❦ ❦ ❦</span>
-    </footer>
 
   </main>
 
   <script src="js/vendor/gsap.min.js"></script>
   <script src="js/vendor/ScrollTrigger.min.js"></script>
-  <script src="js/vendor/lenis.min.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
