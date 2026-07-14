@@ -60,24 +60,22 @@
 
   const audio = document.getElementById("melody");
   const musicBtn = document.getElementById("music-btn");
-  let userStoppedMusic = false;
+  let musicOn = true; // music is ON by default
 
-  // the button always mirrors what you can actually HEAR
   const syncMusicBtn = () => {
-    const off = audio.paused;
-    musicBtn.classList.toggle("is-off", off);
-    musicBtn.classList.toggle("is-playing", !off);
-    musicBtn.setAttribute("aria-pressed", String(!off));
-    musicBtn.setAttribute("aria-label", off ? "Play music" : "Pause music");
+    musicBtn.classList.toggle("is-off", !musicOn);
+    musicBtn.classList.toggle("is-playing", musicOn && !audio.paused);
+    musicBtn.setAttribute("aria-pressed", String(musicOn));
+    musicBtn.setAttribute("aria-label", musicOn ? "Pause music" : "Play music");
   };
 
   const tryPlayMusic = () => {
-    if (userStoppedMusic || !audio.paused) return;
+    if (!musicOn || !audio.paused) return;
     audio.volume = 0.55;
     audio.play().catch(() => {});
   };
 
-  tryPlayMusic(); // autoplay may be blocked — first real touch below starts it
+  tryPlayMusic(); // if the browser blocks autoplay, the first touch starts it
   ["pointerdown", "touchstart", "keydown"].forEach((ev) =>
     window.addEventListener(
       ev,
@@ -92,14 +90,14 @@
 
   musicBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    if (audio.paused) {
-      userStoppedMusic = false;
+    musicOn = !musicOn;
+    if (musicOn) {
       audio.volume = 0.55;
       audio.play().catch(() => {});
     } else {
-      userStoppedMusic = true;
       audio.pause();
     }
+    syncMusicBtn();
   });
   audio.addEventListener("play", syncMusicBtn);
   audio.addEventListener("pause", syncMusicBtn);
@@ -284,24 +282,33 @@
       .to(details, { opacity: 1, y: 0, stagger: 0.1, duration: 0.6, ease: "power3.out" }, "-=1.0");
 
     let pending = null;
-    const enter = () => {
-      spawnBurst(key); // splash pops immediately…
-      if (pending) pending.kill();
-      pending = gsap.delayedCall(0.55, () => etl.restart()); // …then the event loads
-    };
-    const leave = () => {
-      if (pending) pending.kill();
-      etl.pause(0); // rewind so re-entering replays splash + content
-    };
+    const killPending = () => { if (pending) pending.kill(); pending = null; };
 
     ScrollTrigger.create({
       trigger: section,
       start: "top 50%",
       end: "bottom 50%",
-      onEnter: enter,
-      onEnterBack: enter,
-      onLeave: leave,
-      onLeaveBack: leave,
+      // scrolling DOWN into the event: splash first, then the content loads
+      onEnter: () => {
+        killPending();
+        spawnBurst(key);
+        pending = gsap.delayedCall(0.55, () => etl.restart());
+      },
+      // scrolling back UP: no replay — show the event instantly
+      onEnterBack: () => {
+        killPending();
+        etl.progress(1).pause();
+      },
+      // passed below: make sure content is fully shown (in case of a fast flick)
+      onLeave: () => {
+        killPending();
+        etl.progress(1).pause();
+      },
+      // scrolled back above it: rewind so the next downward visit replays
+      onLeaveBack: () => {
+        killPending();
+        etl.pause(0);
+      },
     });
 
     // inner media parallax within the arch frame
