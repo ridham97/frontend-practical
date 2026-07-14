@@ -10,29 +10,33 @@
 
   /* ─────────────── Loader ─────────────── */
 
+  let onLoaderDone = null; // assigned once the hero timeline exists
+
   const loader = document.getElementById("loader");
   const hideLoader = () => {
     loader.classList.add("is-done");
     document.body.style.overflow = "";
+    if (onLoaderDone) onLoaderDone();
   };
   document.body.style.overflow = "hidden";
 
-  // Hide once hero image is ready (or after a max wait)
-  const heroImg = document.querySelector(".hero__bg img");
+  // Hide once the hero media has a first frame (or after a max wait)
+  const heroMedia = document.querySelector(".hero__media");
   const minWait = new Promise((r) => setTimeout(r, 1400));
-  const imgReady = new Promise((r) => {
-    if (!heroImg || heroImg.complete) return r();
-    heroImg.addEventListener("load", r, { once: true });
-    heroImg.addEventListener("error", r, { once: true });
+  const mediaReady = new Promise((r) => {
+    if (!heroMedia || heroMedia.readyState >= 2) return r();
+    heroMedia.addEventListener("loadeddata", r, { once: true });
+    heroMedia.addEventListener("error", r, { once: true });
   });
   Promise.race([
-    Promise.all([minWait, imgReady]),
+    Promise.all([minWait, mediaReady]),
     new Promise((r) => setTimeout(r, 4500)),
   ]).then(hideLoader);
 
   /* ─────────────── Countdown ─────────────── */
 
-  const target = new Date("2026-01-28T09:00:00+05:30").getTime();
+  // counts down to the Lagan — 29 January 2027, 7:00 PM IST
+  const target = new Date("2027-01-29T19:00:00+05:30").getTime();
   const cd = {
     d: document.getElementById("cd-d"),
     h: document.getElementById("cd-h"),
@@ -69,7 +73,7 @@
 
   if (!window.gsap || !window.ScrollTrigger) {
     // animation libs unavailable — show all content statically
-    document.querySelectorAll(".reveal").forEach((el) => (el.style.opacity = 1));
+    document.querySelectorAll(".reveal, .anim").forEach((el) => (el.style.opacity = 1));
     return;
   }
   gsap.registerPlugin(ScrollTrigger);
@@ -93,7 +97,7 @@
 
   if (prefersReduced) {
     // Show everything statically and stop here.
-    document.querySelectorAll(".reveal").forEach((el) => (el.style.opacity = 1));
+    document.querySelectorAll(".reveal, .anim").forEach((el) => (el.style.opacity = 1));
     return;
   }
 
@@ -146,24 +150,34 @@
 
   /* ─────────────── Hero animations ─────────────── */
 
-  const heroTl = gsap.timeline({ delay: 1.5 });
-  heroTl
-    .from(".hero__ganesh", { y: 24, opacity: 0, duration: 0.9, ease: "power3.out" })
-    .from(".hero__pre", { y: 24, opacity: 0, duration: 0.9, ease: "power3.out" }, "-=0.6")
-    .from(".hero__name--amee", { x: -60, opacity: 0, duration: 1.2, ease: "power3.out" }, "-=0.5")
-    .from(".hero__amp", { scale: 0, opacity: 0, duration: 0.8, ease: "back.out(2.5)" }, "-=0.7")
-    .from(".hero__name--ridham", { x: 60, opacity: 0, duration: 1.2, ease: "power3.out" }, "-=1.0")
-    .from(".hero__invite", { y: 20, opacity: 0, duration: 0.8 }, "-=0.5")
-    .from(".hero__date", { y: 20, opacity: 0, duration: 0.8 }, "-=0.5")
-    .from(".hero__place", { y: 20, opacity: 0, duration: 0.8 }, "-=0.55")
-    .from(".hero__countdown", { y: 26, opacity: 0, duration: 0.9 }, "-=0.5")
-    .from(".hero__scroll", { opacity: 0, duration: 1 }, "-=0.3");
+  // Explicit initial states set immediately — nothing can flash while the
+  // loader is up, and the intro only plays once the loader is gone.
+  gsap.set(".hero__ganesh, .hero__pre-wrap, .hero__invite, .hero__date-badge, .hero__place, .hero__cd-wrap", { opacity: 0, y: 26 });
+  gsap.set(".hero__scroll", { opacity: 0 });
+  gsap.set(".hero__name--amee", { opacity: 0, x: -60 });
+  gsap.set(".hero__name--ridham", { opacity: 0, x: 60 });
+  gsap.set(".hero__amp", { opacity: 0, scale: 0 });
+  gsap.set(".hero__corner", { opacity: 0, scale: 0.6 });
 
-  // gsap.from() leaves inline opacity — clear the .reveal fallback
-  gsap.set(".hero .reveal", { opacity: 1, delay: 1.5 });
+  const heroTl = gsap.timeline({ paused: true });
+  heroTl
+    .to(".hero__corner", { opacity: 0.9, scale: 1, duration: 1.1, stagger: 0.08, ease: "power3.out" })
+    .to(".hero__ganesh", { y: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, "-=0.8")
+    .to(".hero__pre-wrap", { y: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, "-=0.6")
+    .to(".hero__name--amee", { x: 0, opacity: 1, duration: 1.2, ease: "power3.out" }, "-=0.5")
+    .to(".hero__amp", { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(2.5)" }, "-=0.7")
+    .to(".hero__name--ridham", { x: 0, opacity: 1, duration: 1.2, ease: "power3.out" }, "-=1.0")
+    .to(".hero__invite", { y: 0, opacity: 1, duration: 0.8 }, "-=0.5")
+    .to(".hero__date-badge", { y: 0, opacity: 1, duration: 0.8 }, "-=0.5")
+    .to(".hero__place", { y: 0, opacity: 1, duration: 0.8 }, "-=0.55")
+    .to(".hero__cd-wrap", { y: 0, opacity: 1, duration: 0.9 }, "-=0.5")
+    .to(".hero__scroll", { opacity: 1, duration: 1 }, "-=0.3");
+
+  onLoaderDone = () => setTimeout(() => heroTl.play(), 250);
+  if (loader.classList.contains("is-done")) onLoaderDone();
 
   // hero parallax: bg drifts slower + zooms out while scrolling away
-  gsap.to(".hero__bg img", {
+  gsap.to(".hero__media", {
     yPercent: 14,
     scale: 1.0,
     ease: "none",
@@ -201,7 +215,7 @@
     const no = section.querySelector(".event__no");
     const letters = section.querySelectorAll(".event__title span");
     const card = section.querySelector(".event__card");
-    const img = section.querySelector(".event__card-frame img");
+    const img = section.querySelector(".event__media");
     const shine = section.querySelector(".event__card-shine");
     const details = section.querySelectorAll(".detail, .event__desc");
 
@@ -218,17 +232,19 @@
       .from(sub, { y: 16, opacity: 0, duration: 0.7 }, "-=0.5")
       .from(no, { opacity: 0, scale: 1.6, duration: 1 }, "-=0.8");
 
-    // card: 3D tilt from deep perspective as it scrolls in, then shine sweep
+    // card: deep 3D sweep from perspective as it scrolls in, then shine sweep
     gsap.fromTo(
       card,
-      { rotateX: 24, z: -160, y: 90, opacity: 0, transformOrigin: "center 80%" },
+      { rotateX: 38, rotateY: -10, z: -260, y: 130, scale: 0.86, opacity: 0, transformOrigin: "center 85%" },
       {
         rotateX: 0,
+        rotateY: 0,
         z: 0,
         y: 0,
+        scale: 1,
         opacity: 1,
         ease: "power2.out",
-        scrollTrigger: { trigger: card, start: "top 95%", end: "top 45%", scrub: 0.6 },
+        scrollTrigger: { trigger: card, start: "top 98%", end: "top 40%", scrub: 0.6 },
       }
     );
 
@@ -269,6 +285,31 @@
       scrollTrigger: { trigger: section, start: "bottom 60%", end: "bottom 10%", scrub: true },
     });
   });
+
+  /* ─────────────── Ambient video playback (lazy, viewport-aware) ─────────────── */
+
+  const heroVideo = document.querySelector(".hero__media");
+  if (heroVideo) heroVideo.play().catch(() => {});
+
+  const eventVideos = document.querySelectorAll(".event__media");
+  if ("IntersectionObserver" in window) {
+    const vObs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(({ target: v, isIntersecting }) => {
+          if (isIntersecting) {
+            if (v.preload === "none") v.preload = "auto";
+            v.play().catch(() => {});
+          } else {
+            v.pause();
+          }
+        });
+      },
+      { rootMargin: "60% 0px" } // start a bit before the card scrolls in
+    );
+    eventVideos.forEach((v) => vObs.observe(v));
+  } else {
+    eventVideos.forEach((v) => v.play().catch(() => {}));
+  }
 
   /* ─────────────── Timeline progress line ─────────────── */
 

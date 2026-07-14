@@ -53,13 +53,37 @@
     <!-- ═══════════════ HERO ═══════════════ -->
     <section class="hero panel" id="hero">
       <div class="hero__bg parallax-bg">
-        <img src="img/hero.jpg" alt="" fetchpriority="high" />
+        <video
+          class="hero__media"
+          poster="img/hero.jpg"
+          muted
+          loop
+          playsinline
+          autoplay
+          preload="auto"
+          aria-hidden="true"
+        >
+          <source src="video/hero.mp4" type="video/mp4" />
+        </video>
         <div class="hero__veil"></div>
       </div>
 
+      <!-- ornamental gold frame -->
+      <div class="hero__frame" aria-hidden="true">
+        <span class="hero__corner hero__corner--tl"></span>
+        <span class="hero__corner hero__corner--tr"></span>
+        <span class="hero__corner hero__corner--bl"></span>
+        <span class="hero__corner hero__corner--br"></span>
+      </div>
+
       <div class="hero__content">
-        <p class="hero__ganesh reveal">|| શ્રી ગણેશાય નમઃ ||</p>
-        <p class="hero__pre reveal">Together with their families</p>
+        <p class="hero__ganesh anim">॥ શ્રી ગણેશાય નમઃ ॥</p>
+
+        <div class="hero__pre-wrap anim">
+          <span class="hero__pre-line"></span>
+          <p class="hero__pre">The Wedding Of</p>
+          <span class="hero__pre-line hero__pre-line--r"></span>
+        </div>
 
         <h1 class="hero__names">
           <span class="hero__name hero__name--amee">Amee</span>
@@ -67,25 +91,34 @@
           <span class="hero__name hero__name--ridham">Ridham</span>
         </h1>
 
-        <p class="hero__invite reveal">joyfully invite you to celebrate their wedding</p>
+        <p class="hero__invite anim">
+          Together with their families,<br />
+          joyfully invite you to their wedding celebrations
+        </p>
 
-        <div class="hero__date reveal">
-          <span class="hero__date-line"></span>
-          <p class="hero__date-main">28 <em>&amp;</em> 29 January 2026</p>
-          <span class="hero__date-line"></span>
+        <div class="hero__date-badge anim">
+          <span class="hero__date-dia">◆</span>
+          <p class="hero__date-main">28 <em>·</em> 29 January 2026</p>
+          <span class="hero__date-dia">◆</span>
         </div>
 
-        <p class="hero__place reveal">Rajkot · Gujarat</p>
+        <p class="hero__place anim">OTB · Rajkot · Gujarat</p>
 
-        <div class="hero__countdown reveal" id="countdown">
-          <div class="cd"><b id="cd-d">00</b><i>Days</i></div>
-          <div class="cd"><b id="cd-h">00</b><i>Hours</i></div>
-          <div class="cd"><b id="cd-m">00</b><i>Mins</i></div>
-          <div class="cd"><b id="cd-s">00</b><i>Secs</i></div>
+        <div class="hero__cd-wrap anim">
+          <p class="hero__cd-label">— the lagan countdown —</p>
+          <div class="hero__countdown" id="countdown">
+            <div class="cd"><b id="cd-d">00</b><i>Days</i></div>
+            <span class="cd-sep">:</span>
+            <div class="cd"><b id="cd-h">00</b><i>Hours</i></div>
+            <span class="cd-sep">:</span>
+            <div class="cd"><b id="cd-m">00</b><i>Mins</i></div>
+            <span class="cd-sep">:</span>
+            <div class="cd"><b id="cd-s">00</b><i>Secs</i></div>
+          </div>
         </div>
       </div>
 
-      <div class="hero__scroll">
+      <div class="hero__scroll anim">
         <span class="hero__scroll-text">Scroll to unfold</span>
         <span class="hero__scroll-line"></span>
       </div>
@@ -118,7 +151,9 @@
 
         <figure class="event__card tilt-card">
           <div class="event__card-frame">
-            <img src="img/mandvo.jpg" alt="Mandvo decoration — green foliage with white flowers" loading="lazy" />
+            <video class="event__media" poster="img/mandvo.jpg" muted loop playsinline preload="none" aria-label="Mandvo decoration — green foliage with white flowers swaying in the breeze">
+              <source src="video/mandvo.mp4" type="video/mp4" />
+            </video>
             <span class="event__card-shine"></span>
           </div>
           <span class="event__card-border"></span>
@@ -131,7 +166,7 @@
           </div>
           <div class="detail">
             <span class="detail__icon">✿</span>
-            <div><b>Dress Theme</b><i>Shades of <em class="theme-chip theme-chip--green">Green</em></i></div>
+            <div><b>Dress Theme</b><i><em class="theme-chip theme-chip--green">Shades of Green</em></i></div>
           </div>
           <p class="event__desc">
             Under a canopy of fresh greens and white blooms, the sacred
@@ -154,7 +189,9 @@
 
         <figure class="event__card tilt-card">
           <div class="event__card-frame">
-            <img src="img/haldi.jpg" alt="Haldi decoration — purple drapes and flowers" loading="lazy" />
+            <video class="event__media" poster="img/haldi.jpg" muted loop playsinline preload="none" aria-label="Haldi decoration — purple drapes and flowers moving gently">
+              <source src="video/haldi.mp4" type="video/mp4" />
+            </video>
             <span class="event__card-shine"></span>
           </div>
           <span class="event__card-border"></span>
@@ -167,7 +204,7 @@
           </div>
           <div class="detail">
             <span class="detail__icon">✿</span>
-            <div><b>Dress Theme</b><i>Shades of <em class="theme-chip theme-chip--purple">Purple / Violet</em></i></div>
+            <div><b>Dress Theme</b><i><em class="theme-chip theme-chip--purple">Purple / Violet</em></i></div>
           </div>
           <p class="event__desc">
             Amidst violet drapes and orchid strings, turmeric and
@@ -190,7 +227,9 @@
 
         <figure class="event__card tilt-card">
           <div class="event__card-frame">
-            <img src="img/sangeet.jpg" alt="Sanji / Sangeet decoration — black and golden lights" loading="lazy" />
+            <video class="event__media" poster="img/sangeet.jpg" muted loop playsinline preload="none" aria-label="Sanji decoration — golden fairy lights twinkling">
+              <source src="video/sangeet.mp4" type="video/mp4" />
+            </video>
             <span class="event__card-shine"></span>
           </div>
           <span class="event__card-border"></span>
@@ -203,7 +242,7 @@
           </div>
           <div class="detail">
             <span class="detail__icon">✿</span>
-            <div><b>Dress Theme</b><i>Open theme — <em class="theme-chip theme-chip--gold">dress to dazzle</em></i></div>
+            <div><b>Dress Theme</b><i><em class="theme-chip theme-chip--gold">Open — dress to dazzle</em></i></div>
           </div>
           <p class="event__desc">
             When the sun sets, a thousand golden lights take over —
@@ -226,7 +265,9 @@
 
         <figure class="event__card tilt-card">
           <div class="event__card-frame">
-            <img src="img/lagan.jpg" alt="Wedding mandap covered in flowers" loading="lazy" />
+            <video class="event__media" poster="img/lagan.jpg" muted loop playsinline preload="none" aria-label="Wedding mandap covered in flowers with petals falling">
+              <source src="video/lagan.mp4" type="video/mp4" />
+            </video>
             <span class="event__card-shine"></span>
           </div>
           <span class="event__card-border"></span>
@@ -239,7 +280,7 @@
           </div>
           <div class="detail">
             <span class="detail__icon">✿</span>
-            <div><b>Dress Theme</b><i>Open theme — <em class="theme-chip theme-chip--rose">festive best</em></i></div>
+            <div><b>Dress Theme</b><i><em class="theme-chip theme-chip--rose">Open — festive best</em></i></div>
           </div>
           <p class="event__desc">
             Beneath a mandap woven entirely of flowers, Amee and Ridham
