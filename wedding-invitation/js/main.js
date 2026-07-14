@@ -60,35 +60,50 @@
 
   const audio = document.getElementById("melody");
   const musicBtn = document.getElementById("music-btn");
-  let musicWanted = true;
+  let userStoppedMusic = false;
 
-  const updateMusicBtn = () => {
-    musicBtn.classList.toggle("is-off", !musicWanted);
-    musicBtn.classList.toggle("is-playing", !audio.paused);
-    musicBtn.setAttribute("aria-pressed", String(musicWanted));
-    musicBtn.setAttribute("aria-label", musicWanted ? "Pause music" : "Play music");
+  // the button always mirrors what you can actually HEAR
+  const syncMusicBtn = () => {
+    const off = audio.paused;
+    musicBtn.classList.toggle("is-off", off);
+    musicBtn.classList.toggle("is-playing", !off);
+    musicBtn.setAttribute("aria-pressed", String(!off));
+    musicBtn.setAttribute("aria-label", off ? "Play music" : "Pause music");
   };
 
   const tryPlayMusic = () => {
-    if (!musicWanted) return;
+    if (userStoppedMusic || !audio.paused) return;
     audio.volume = 0.55;
-    audio.play().then(updateMusicBtn).catch(() => {});
+    audio.play().catch(() => {});
   };
 
-  tryPlayMusic(); // browsers may block until first touch — retried below
-  ["pointerdown", "touchstart", "keydown", "scroll"].forEach((ev) =>
-    window.addEventListener(ev, tryPlayMusic, { once: true, passive: true })
+  tryPlayMusic(); // autoplay may be blocked — first real touch below starts it
+  ["pointerdown", "touchstart", "keydown"].forEach((ev) =>
+    window.addEventListener(
+      ev,
+      (e) => {
+        // taps on the music button itself are handled by its own click
+        if (e.target && e.target.closest && e.target.closest("#music-btn")) return;
+        tryPlayMusic();
+      },
+      { passive: true }
+    )
   );
 
   musicBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    musicWanted = !musicWanted;
-    if (musicWanted) tryPlayMusic();
-    else audio.pause();
-    updateMusicBtn();
+    if (audio.paused) {
+      userStoppedMusic = false;
+      audio.volume = 0.55;
+      audio.play().catch(() => {});
+    } else {
+      userStoppedMusic = true;
+      audio.pause();
+    }
   });
-  audio.addEventListener("play", updateMusicBtn);
-  audio.addEventListener("pause", updateMusicBtn);
+  audio.addEventListener("play", syncMusicBtn);
+  audio.addEventListener("pause", syncMusicBtn);
+  syncMusicBtn();
 
   /* ─────────────── GSAP setup (scroll is native CSS snap) ─────────────── */
 
@@ -191,12 +206,10 @@
   gsap.set(".hero__name--amee", { opacity: 0, x: -60 });
   gsap.set(".hero__name--ridham", { opacity: 0, x: 60 });
   gsap.set(".hero__amp", { opacity: 0, scale: 0 });
-  gsap.set(".hero__corner", { opacity: 0, scale: 0.6 });
 
   const heroTl = gsap.timeline({ paused: true });
   heroTl
-    .to(".hero__corner", { opacity: 0.9, scale: 1, duration: 0.8, stagger: 0.05, ease: "power3.out" })
-    .to(".hero__ganesh", { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, "-=0.7")
+    .to(".hero__ganesh", { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" })
     .to(".hero__pre-wrap", { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, "-=0.5")
     .to(".hero__name--amee", { x: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, "-=0.45")
     .to(".hero__amp", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(2.5)" }, "-=0.6")
@@ -406,6 +419,37 @@
       g.fill();
     },
 
+    // full rose bloom seen from above — layered petals spiralling to a dark heart
+    fullrose(g, r, color) {
+      const layers = [
+        { pr: 1.0, n: 7, sh: 0.1 },
+        { pr: 0.7, n: 6, sh: -0.02 },
+        { pr: 0.46, n: 5, sh: -0.14 },
+        { pr: 0.26, n: 3, sh: -0.26 },
+      ];
+      layers.forEach(({ pr, n, sh }, li) => {
+        for (let i = 0; i < n; i++) {
+          g.save();
+          g.rotate((Math.PI * 2 * i) / n + li * 0.55);
+          const grad = g.createRadialGradient(0, -r * pr * 0.5, 0, 0, -r * pr * 0.5, r * pr * 0.62);
+          grad.addColorStop(0, shade(color, sh + 0.18));
+          grad.addColorStop(1, shade(color, sh - 0.08));
+          g.fillStyle = grad;
+          g.beginPath();
+          g.ellipse(0, -r * pr * 0.52, r * pr * 0.42, r * pr * 0.5, 0, 0, Math.PI * 2);
+          g.fill();
+          g.strokeStyle = shade(color, sh - 0.28);
+          g.lineWidth = r * 0.03;
+          g.stroke();
+          g.restore();
+        }
+      });
+      g.fillStyle = shade(color, -0.42);
+      g.beginPath();
+      g.arc(0, 0, r * 0.13, 0, Math.PI * 2);
+      g.fill();
+    },
+
     // wide curved rose petal with a highlight curl
     rose(g, r, color) {
       const grad = g.createLinearGradient(0, -r, 0, r);
@@ -546,24 +590,25 @@
         });
       }
     } else if (key === "haldi") {
-      // holi: paint splats burst out and powder clouds bloom
-      for (let i = 0; i < 24; i++) {
-        const a = rand(0, Math.PI * 2), sp = rand(3, 9);
-        pushShape({
-          img: sprite("splat", pick(HOLI), (Math.random() * 4) | 0),
-          x: cx + rand(-50, 50), y: cy + rand(-40, 40),
-          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.6,
-          size: rand(12, 26), g: 0.085, drag: 0.978,
-          decay: rand(0.008, 0.013), delay: rand(0, 160),
-        });
-      }
-      for (let i = 0; i < 9; i++) {
+      // holi: huge powder-smoke clouds bloom across the whole screen
+      for (let i = 0; i < 18; i++) {
         pushShape({
           kind: "puff", color: pick(HOLI),
-          x: cx + rand(-100, 100), y: cy + rand(-70, 70),
-          vx: rand(-1.2, 1.2), vy: rand(-1.6, 0.3),
-          size: rand(26, 44), scaleV: rand(0.015, 0.03),
-          g: -0.004, drag: 0.985, decay: rand(0.011, 0.016), delay: rand(0, 220),
+          x: W * rand(0.08, 0.92), y: H * rand(0.18, 0.6),
+          vx: rand(-1, 1), vy: rand(-1.3, 0.15),
+          size: rand(55, 110), scale: 0.35, scaleV: rand(0.025, 0.05),
+          g: -0.003, drag: 0.989, decay: rand(0.006, 0.01), delay: rand(0, 320),
+        });
+      }
+      // a few paint splats popping through the smoke
+      for (let i = 0; i < 12; i++) {
+        const a = rand(0, Math.PI * 2), sp = rand(3, 8);
+        pushShape({
+          img: sprite("splat", pick(HOLI), (Math.random() * 4) | 0),
+          x: cx + rand(-90, 90), y: cy + rand(-60, 60),
+          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.4,
+          size: rand(12, 22), g: 0.08, drag: 0.978,
+          decay: rand(0.008, 0.013), delay: rand(80, 320),
         });
       }
     } else if (key === "sangeet") {
@@ -578,14 +623,15 @@
         });
       }
     } else if (key === "lagan") {
-      // rose petal shower
-      for (let i = 0; i < 34; i++) {
-        const a = rand(0, Math.PI * 2), sp = rand(2.5, 7.5);
+      // full roses raining across the screen
+      for (let i = 0; i < 26; i++) {
+        const a = rand(0, Math.PI * 2), sp = rand(2, 6.5);
         pushShape({
-          img: sprite("rose", pick(ROSE)),
-          x: cx + rand(-70, 70), y: cy + rand(-60, 60),
-          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2.2,
-          size: rand(12, 22), g: 0.055, decay: rand(0.005, 0.009), delay: rand(0, 220),
+          img: sprite("fullrose", pick(ROSE)),
+          x: cx + rand(-90, 90), y: cy + rand(-70, 70),
+          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2,
+          size: rand(18, 34), g: 0.055, vr: rand(-0.08, 0.08),
+          decay: rand(0.005, 0.009), delay: rand(0, 260),
         });
       }
     }
@@ -661,7 +707,7 @@
         const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
         g.addColorStop(0, p.color);
         g.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.globalAlpha = Math.max(0, p.life * 0.5);
+        ctx.globalAlpha = Math.max(0, p.life * 0.62);
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
