@@ -529,18 +529,6 @@ main { position: relative; z-index: 2; }
   align-items: center;
 }
 
-.blessings__guj {
-  font-family: var(--font-guj);
-  font-size: 0.92rem;
-  letter-spacing: 0.06em;
-  color: #f0d493;
-  padding: 6px 18px;
-  border: 1px solid rgba(212, 169, 89, 0.4);
-  border-radius: 999px;
-  background: rgba(240, 212, 147, 0.06);
-  margin-bottom: 2.2svh;
-}
-
 .blessings__lead {
   font-family: var(--font-caps);
   font-size: 0.74rem;
@@ -676,19 +664,6 @@ main { position: relative; z-index: 2; }
   background: linear-gradient(90deg, var(--gold), transparent);
 }
 
-.blessings__events {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  font-family: var(--font-guj);
-  font-size: 1rem;
-  color: var(--gold);
-  margin-top: 3svh;
-}
-
-.blessings__events i { font-style: normal; opacity: 0.5; }
 
 /* ─────────────── Event sections ─────────────── */
 

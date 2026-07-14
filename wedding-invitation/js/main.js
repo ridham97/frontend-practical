@@ -140,13 +140,13 @@
   // every page has a trigger and they all switch at the 50% line, so the
   // colour changes exactly when a page takes over — identical up or down
   const themes = [
-    { sel: "#hero",      key: "hero",    burst: null },
-    { sel: "#blessings", key: "hero",    burst: null },
-    { sel: "#mandvo",    key: "mandvo",  burst: "mandvo" },
-    { sel: "#haldi",     key: "haldi",   burst: "haldi" },
-    { sel: "#sangeet",   key: "sangeet", burst: "sangeet" },
-    { sel: "#lagan",     key: "lagan",   burst: "lagan" },
-    { sel: "#venue",     key: "venue",   burst: null },
+    { sel: "#hero",      key: "hero" },
+    { sel: "#blessings", key: "hero" },
+    { sel: "#mandvo",    key: "mandvo" },
+    { sel: "#haldi",     key: "haldi" },
+    { sel: "#sangeet",   key: "sangeet" },
+    { sel: "#lagan",     key: "lagan" },
+    { sel: "#venue",     key: "venue" },
   ];
 
   function showLayer(key) {
@@ -155,13 +155,13 @@
     });
   }
 
-  themes.forEach(({ sel, key, burst }) => {
+  themes.forEach(({ sel, key }) => {
     ScrollTrigger.create({
       trigger: sel,
       start: "top 50%",
       end: "bottom 50%",
-      onEnter: () => { showLayer(key); if (burst) spawnBurst(burst); },
-      onEnterBack: () => { showLayer(key); if (burst) spawnBurst(burst); },
+      onEnter: () => showLayer(key),
+      onEnterBack: () => showLayer(key),
     });
   });
 
@@ -240,10 +240,10 @@
     );
   });
 
-  /* ─────────────── Event sections: 3D scroll choreography ─────────────── */
+  /* ─────────────── Event sections: splash FIRST, then the content loads ─────────────── */
 
   document.querySelectorAll(".event").forEach((section) => {
-    const head = section.querySelector(".event__head");
+    const key = section.dataset.theme;
     const guj = section.querySelector(".event__guj");
     const sub = section.querySelector(".event__sub");
     const no = section.querySelector(".event__no");
@@ -253,44 +253,45 @@
     const shine = section.querySelector(".event__card-shine");
     const details = section.querySelectorAll(".detail, .event__desc");
 
-    // heading letters cascade in
-    const tl = gsap.timeline({
-      scrollTrigger: { trigger: head, start: "top 82%" },
-    });
-    tl.from(guj, { y: 20, opacity: 0, duration: 0.7, ease: "power3.out" })
-      .from(
-        letters,
-        { y: 46, opacity: 0, rotateX: -75, stagger: 0.06, duration: 0.9, ease: "back.out(1.8)" },
-        "-=0.4"
-      )
-      .from(sub, { y: 16, opacity: 0, duration: 0.7 }, "-=0.5")
-      .from(no, { opacity: 0, scale: 1.6, duration: 1 }, "-=0.8");
+    // hidden until the splash has fired
+    gsap.set([guj, sub], { opacity: 0, y: 18 });
+    gsap.set(no, { opacity: 0, scale: 1.5 });
+    gsap.set(letters, { opacity: 0, y: 40, rotateX: -70 });
+    gsap.set(card, { opacity: 0, rotateX: 34, rotateY: -8, z: -240, y: 110, scale: 0.88, transformOrigin: "center 85%" });
+    gsap.set(details, { opacity: 0, y: 26 });
 
-    // card: deep 3D sweep from perspective as it scrolls in, then shine sweep
-    gsap.fromTo(
-      card,
-      { rotateX: 38, rotateY: -10, z: -260, y: 130, scale: 0.86, opacity: 0, transformOrigin: "center 85%" },
-      {
-        rotateX: 0,
-        rotateY: 0,
-        z: 0,
-        y: 0,
-        scale: 1,
-        opacity: 1,
-        ease: "power2.out",
-        scrollTrigger: { trigger: card, start: "top 98%", end: "top 40%", scrub: 0.6 },
-      }
-    );
+    const etl = gsap.timeline({ paused: true });
+    etl
+      .to(guj, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" })
+      .to(letters, { opacity: 1, y: 0, rotateX: 0, stagger: 0.05, duration: 0.7, ease: "back.out(1.8)" }, "-=0.3")
+      .to(sub, { opacity: 1, y: 0, duration: 0.5 }, "-=0.4")
+      .to(no, { opacity: 0.22, scale: 1, duration: 0.8 }, "-=0.5")
+      .to(card, { opacity: 1, rotateX: 0, rotateY: 0, z: 0, y: 0, scale: 1, duration: 0.9, ease: "power3.out" }, "-=0.55")
+      .to(shine, { x: "240%", duration: 1.1, ease: "power2.inOut" }, "-=0.35")
+      .to(details, { opacity: 1, y: 0, stagger: 0.1, duration: 0.6, ease: "power3.out" }, "-=1.0");
+
+    let pending = null;
+    const enter = () => {
+      spawnBurst(key); // splash pops immediately…
+      if (pending) pending.kill();
+      pending = gsap.delayedCall(0.55, () => etl.restart()); // …then the event loads
+    };
+    const leave = () => {
+      if (pending) pending.kill();
+      etl.pause(0); // rewind so re-entering replays splash + content
+    };
 
     ScrollTrigger.create({
-      trigger: card,
-      start: "top 55%",
-      once: true,
-      onEnter: () =>
-        gsap.to(shine, { x: "240%", duration: 1.4, ease: "power2.inOut", delay: 0.15 }),
+      trigger: section,
+      start: "top 50%",
+      end: "bottom 50%",
+      onEnter: enter,
+      onEnterBack: enter,
+      onLeave: leave,
+      onLeaveBack: leave,
     });
 
-    // inner image parallax within the arch frame
+    // inner media parallax within the arch frame
     gsap.fromTo(
       img,
       { yPercent: -7 },
@@ -300,24 +301,6 @@
         scrollTrigger: { trigger: card, start: "top bottom", end: "bottom top", scrub: true },
       }
     );
-
-    // details rise in a stagger
-    gsap.from(details, {
-      y: 30,
-      opacity: 0,
-      stagger: 0.14,
-      duration: 0.9,
-      ease: "power3.out",
-      scrollTrigger: { trigger: section.querySelector(".event__details"), start: "top 88%" },
-    });
-
-    // whole section gently floats out as you leave (keeps flow continuous)
-    gsap.to(section.querySelector(".event__inner"), {
-      yPercent: -3,
-      opacity: 0.6,
-      ease: "none",
-      scrollTrigger: { trigger: section, start: "bottom 45%", end: "bottom 8%", scrub: true },
-    });
   });
 
   /* ─────────────── Ambient video playback (lazy, viewport-aware) ─────────────── */
@@ -345,7 +328,9 @@
     eventVideos.forEach((v) => v.play().catch(() => {}));
   }
 
-  /* ═══════════════ PARTICLES — themed per section ═══════════════ */
+  /* ═══════════════ BURST ENGINE — natural, hand-drawn particle shapes ═══════════════
+     No ambient falling particles: the canvas is only used for the
+     entrance splashes, drawn from pre-rendered natural sprites. */
 
   const canvas = document.getElementById("particles");
   const ctx = canvas.getContext("2d");
@@ -364,206 +349,260 @@
   resize();
   window.addEventListener("resize", resize);
 
-  /*  Each theme: colours + motion style
-      petal  — drifting flower petals (ellipse with rotation)
-      spark  — floating glowing bokeh dots
-  */
-  const PARTICLE_THEMES = {
-    hero:    { kind: "petal", colors: ["#e8a63d", "#f0c979", "#d97f2e"], count: 26 }, // marigold
-    mandvo:  { kind: "petal", colors: ["#ffffff", "#eef7ee", "#cfe8d2"], count: 26 }, // white flowers
-    haldi:   { kind: "petal", colors: ["#c9a0ef", "#a86fd6", "#e9d3fb", "#f4c542"], count: 28 }, // purple + turmeric
-    sangeet: { kind: "spark", colors: ["#f5d78e", "#e8c268", "#fff2c4"], count: 46 }, // golden bokeh
-    lagan:   { kind: "petal", colors: ["#f2a0a8", "#e86a76", "#fbd9dc", "#fff5f0"], count: 32 }, // rose petals
-    venue:   { kind: "spark", colors: ["#d4a959", "#f0e0b8"], count: 22 },
-  };
-
-  let currentTheme = PARTICLE_THEMES.hero;
-  let particles = [];
-
-  function makeParticle(theme, spawnAnywhere) {
-    const c = theme.colors[(Math.random() * theme.colors.length) | 0];
-    if (theme.kind === "spark") {
-      return {
-        kind: "spark",
-        x: Math.random() * W,
-        y: spawnAnywhere ? Math.random() * H : H + 10,
-        r: 1 + Math.random() * 2.6,
-        vy: -(0.15 + Math.random() * 0.45),
-        vx: (Math.random() - 0.5) * 0.2,
-        tw: Math.random() * Math.PI * 2,
-        tws: 0.02 + Math.random() * 0.04,
-        color: c,
-        alpha: 0.25 + Math.random() * 0.55,
-      };
-    }
-    return {
-      kind: "petal",
-      x: Math.random() * W,
-      y: spawnAnywhere ? Math.random() * H : -20,
-      w: 5 + Math.random() * 7,
-      h: 3 + Math.random() * 4,
-      vy: 0.35 + Math.random() * 0.75,
-      vx: (Math.random() - 0.5) * 0.4,
-      rot: Math.random() * Math.PI * 2,
-      vr: (Math.random() - 0.5) * 0.03,
-      sway: Math.random() * Math.PI * 2,
-      swayS: 0.008 + Math.random() * 0.015,
-      swayA: 0.5 + Math.random() * 0.9,
-      color: c,
-      alpha: 0.5 + Math.random() * 0.45,
-    };
+  /* colour helper: shade("#ff9d2e", 0.3) → lighter, negative → darker */
+  function shade(hex, amt) {
+    const n = parseInt(hex.slice(1), 16);
+    const c = (v) => Math.max(0, Math.min(255, v + 255 * amt)) | 0;
+    return `rgb(${c(n >> 16)},${c((n >> 8) & 255)},${c(n & 255)})`;
   }
 
-  function setTheme(theme) {
-    if (theme === currentTheme) return;
-    currentTheme = theme;
-    // replace gradually: mark old ones to fade out
-    particles.forEach((p) => (p.dying = true));
-    for (let i = 0; i < theme.count; i++) particles.push(makeParticle(theme, true));
+  /* sprite painters — drawn once onto offscreen canvases */
+  const SHAPES = {
+    // single flower petal with vein + light tip
+    petal(g, r, color) {
+      const grad = g.createLinearGradient(0, -r, 0, r);
+      grad.addColorStop(0, shade(color, 0.35));
+      grad.addColorStop(1, color);
+      g.fillStyle = grad;
+      g.beginPath();
+      g.moveTo(0, -r);
+      g.bezierCurveTo(r * 0.68, -r * 0.45, r * 0.72, r * 0.4, 0, r);
+      g.bezierCurveTo(-r * 0.72, r * 0.4, -r * 0.68, -r * 0.45, 0, -r);
+      g.fill();
+      g.strokeStyle = "rgba(255,255,255,0.4)";
+      g.lineWidth = r * 0.06;
+      g.beginPath();
+      g.moveTo(0, -r * 0.65);
+      g.quadraticCurveTo(r * 0.1, 0, 0, r * 0.65);
+      g.stroke();
+    },
+
+    // layered marigold blossom
+    blossom(g, r, color) {
+      for (let ring = 0; ring < 2; ring++) {
+        const pr = r * (ring ? 0.62 : 1);
+        const pc = ring ? shade(color, 0.22) : color;
+        const petals = 8;
+        for (let i = 0; i < petals; i++) {
+          g.save();
+          g.rotate((Math.PI * 2 * i) / petals + ring * 0.39);
+          const grad = g.createLinearGradient(0, 0, 0, -pr);
+          grad.addColorStop(0, shade(pc, -0.12));
+          grad.addColorStop(1, shade(pc, 0.18));
+          g.fillStyle = grad;
+          g.beginPath();
+          g.ellipse(0, -pr * 0.55, pr * 0.3, pr * 0.5, 0, 0, Math.PI * 2);
+          g.fill();
+          g.restore();
+        }
+      }
+      g.fillStyle = shade(color, -0.38);
+      g.beginPath();
+      g.arc(0, 0, r * 0.22, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = shade(color, -0.15);
+      g.beginPath();
+      g.arc(-r * 0.06, -r * 0.06, r * 0.12, 0, Math.PI * 2);
+      g.fill();
+    },
+
+    // wide curved rose petal with a highlight curl
+    rose(g, r, color) {
+      const grad = g.createLinearGradient(0, -r, 0, r);
+      grad.addColorStop(0, shade(color, 0.28));
+      grad.addColorStop(0.65, color);
+      grad.addColorStop(1, shade(color, -0.18));
+      g.fillStyle = grad;
+      g.beginPath();
+      g.moveTo(-r * 0.78, -r * 0.05);
+      g.bezierCurveTo(-r * 0.85, -r * 0.85, r * 0.85, -r * 0.85, r * 0.78, -r * 0.05);
+      g.bezierCurveTo(r * 0.6, r * 0.7, -r * 0.6, r * 0.7, -r * 0.78, -r * 0.05);
+      g.fill();
+      g.strokeStyle = "rgba(255,255,255,0.35)";
+      g.lineWidth = r * 0.07;
+      g.beginPath();
+      g.moveTo(-r * 0.45, -r * 0.4);
+      g.quadraticCurveTo(0, -r * 0.62, r * 0.45, -r * 0.4);
+      g.stroke();
+    },
+
+    // irregular holi paint splat with satellite droplets
+    splat(g, r, color, variant) {
+      g.fillStyle = color;
+      g.beginPath();
+      const pts = 11;
+      for (let i = 0; i <= pts; i++) {
+        const a = (Math.PI * 2 * i) / pts;
+        const wob =
+          0.62 +
+          0.38 * Math.abs(Math.sin(i * 2.7 + variant * 5.1)) *
+          (0.7 + 0.3 * Math.sin(i * 4.3 + variant * 2.4));
+        const px = Math.cos(a) * r * wob;
+        const py = Math.sin(a) * r * wob;
+        if (i === 0) g.moveTo(px, py);
+        else g.quadraticCurveTo(
+          Math.cos(a - Math.PI / pts) * r * (wob + 0.18),
+          Math.sin(a - Math.PI / pts) * r * (wob + 0.18),
+          px, py
+        );
+      }
+      g.closePath();
+      g.fill();
+      for (let d = 0; d < 4; d++) {
+        const a = variant * 2.2 + d * 1.7;
+        g.beginPath();
+        g.arc(Math.cos(a) * r * 1.02, Math.sin(a) * r * 1.02, r * (0.08 + 0.07 * ((d + variant) % 3)), 0, Math.PI * 2);
+        g.fill();
+      }
+      g.fillStyle = shade(color, 0.25);
+      g.beginPath();
+      g.arc(-r * 0.18, -r * 0.18, r * 0.3, 0, Math.PI * 2);
+      g.fill();
+    },
+
+    // four-point firecracker star
+    star(g, r, color) {
+      g.fillStyle = color;
+      g.beginPath();
+      for (let i = 0; i < 4; i++) {
+        const a = (Math.PI / 2) * i;
+        g.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+        g.lineTo(Math.cos(a + Math.PI / 4) * r * 0.22, Math.sin(a + Math.PI / 4) * r * 0.22);
+      }
+      g.closePath();
+      g.fill();
+      const glow = g.createRadialGradient(0, 0, 0, 0, 0, r);
+      glow.addColorStop(0, "rgba(255,255,255,0.9)");
+      glow.addColorStop(0.35, shade(color, 0.2) + "");
+      glow.addColorStop(1, "rgba(255,255,255,0)");
+      g.globalAlpha = 0.7;
+      g.fillStyle = glow;
+      g.beginPath();
+      g.arc(0, 0, r, 0, Math.PI * 2);
+      g.fill();
+      g.globalAlpha = 1;
+    },
+  };
+
+  const spriteCache = new Map();
+  function sprite(shape, color, variant = 0) {
+    const k = shape + color + variant;
+    let c = spriteCache.get(k);
+    if (c) return c;
+    c = document.createElement("canvas");
+    c.width = c.height = 96;
+    const g = c.getContext("2d");
+    g.translate(48, 48);
+    SHAPES[shape](g, 42, color, variant);
+    spriteCache.set(k, c);
+    return c;
   }
 
-  for (let i = 0; i < currentTheme.count; i++) particles.push(makeParticle(currentTheme, true));
-
-  const sectionThemeMap = [
-    { sel: "#hero", key: "hero" },
-    { sel: "#blessings", key: "hero" },
-    { sel: "#mandvo", key: "mandvo" },
-    { sel: "#haldi", key: "haldi" },
-    { sel: "#sangeet", key: "sangeet" },
-    { sel: "#lagan", key: "lagan" },
-    { sel: "#venue", key: "venue" },
-  ];
-
-  sectionThemeMap.forEach(({ sel, key }) => {
-    ScrollTrigger.create({
-      trigger: sel,
-      start: "top 50%",
-      end: "bottom 50%",
-      onEnter: () => setTheme(PARTICLE_THEMES[key]),
-      onEnterBack: () => setTheme(PARTICLE_THEMES[key]),
-    });
-  });
-
-  /* ─────────────── Entrance bursts per event ─────────────── */
-
-  const BURST_THEMES = {
-    mandvo:  { kind: "petal",    colors: ["#ff9d2e", "#ffb84d", "#f4c542", "#e8862a", "#fff3d6"], count: 44 },
-    haldi:   { kind: "splash",   colors: ["#b06ee0", "#f4c542", "#ff6fa5", "#4dd0c4", "#9fe06e", "#8e4fd1"], count: 56 },
-    sangeet: { kind: "firework", colors: ["#ffd76e", "#fff3c4", "#ff9d5c", "#f7e6a2"], shells: 3 },
-    lagan:   { kind: "petal",    colors: ["#f2657a", "#f298a3", "#fbd9dc", "#e63e57", "#ffffff"], count: 48 },
-  };
+  /* burst definitions */
+  const MARIGOLD = ["#ff9d2e", "#ffb84d", "#f4c542", "#e8862a"];
+  const HOLI = ["#b06ee0", "#f4c542", "#ff6fa5", "#4dd0c4", "#8e4fd1", "#ffd166"];
+  const ROSE = ["#e63e57", "#f2657a", "#f298a3", "#fbd9dc"];
+  const CRACKER = ["#ffd76e", "#fff3c4", "#ff9d5c", "#ffe9a8"];
 
   const burstParticles = [];
   const lastBurst = {};
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const pick = (arr) => arr[(Math.random() * arr.length) | 0];
+
+  function pushShape(o) {
+    burstParticles.push(Object.assign({
+      delay: 0, g: 0.07, drag: 0.985, rot: rand(0, Math.PI * 2), vr: rand(-0.14, 0.14),
+      sway: rand(0, Math.PI * 2), swayS: rand(0.02, 0.05), swayA: rand(0.2, 0.8),
+      life: 1, decay: 0.007, scale: 1, scaleV: 0, trail: null,
+    }, o));
+  }
 
   function spawnBurst(key) {
-    const t = BURST_THEMES[key];
-    if (!t) return;
     const now = Date.now();
     if (lastBurst[key] && now - lastBurst[key] < 1500) return;
     lastBurst[key] = now;
 
-    if (t.kind === "firework") {
-      for (let s = 0; s < t.shells; s++) {
-        const cx = W * (0.22 + Math.random() * 0.56);
-        const cy = H * (0.16 + Math.random() * 0.3);
-        const delay = s * 320;
-        const color = t.colors[(Math.random() * t.colors.length) | 0];
-        for (let i = 0; i < 30; i++) {
-          const a = (Math.PI * 2 * i) / 30 + Math.random() * 0.25;
-          const sp = 2.4 + Math.random() * 4.2;
-          burstParticles.push({
-            kind: "spark", delay,
-            x: cx, y: cy,
-            vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
-            g: 0.045, drag: 0.975,
-            r: 1.2 + Math.random() * 1.8,
-            life: 1, decay: 0.011 + Math.random() * 0.008,
-            tw: Math.random() * Math.PI * 2, tws: 0.25,
-            color,
-          });
-        }
-      }
-      return;
-    }
-
     const cx = W / 2;
-    const cy = H * 0.4;
-    for (let i = 0; i < t.count; i++) {
-      const a = Math.random() * Math.PI * 2;
-      const sp = 2.5 + Math.random() * 7;
-      const color = t.colors[(Math.random() * t.colors.length) | 0];
-      if (t.kind === "splash") {
-        burstParticles.push({
-          kind: "blob", delay: Math.random() * 120,
-          x: cx + (Math.random() - 0.5) * 60, y: cy + (Math.random() - 0.5) * 60,
-          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.2,
-          g: 0.09, drag: 0.982,
-          r: 3 + Math.random() * 7,
-          life: 1, decay: 0.009 + Math.random() * 0.007,
-          color,
+    const cy = H * 0.38;
+
+    if (key === "mandvo") {
+      // marigold shower: whole blossoms + loose petals
+      for (let i = 0; i < 16; i++) {
+        const a = rand(0, Math.PI * 2), sp = rand(2, 6.5);
+        pushShape({
+          img: sprite("blossom", pick(MARIGOLD)),
+          x: cx + rand(-60, 60), y: cy + rand(-50, 50),
+          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2,
+          size: rand(20, 34), decay: rand(0.006, 0.01), delay: rand(0, 140),
         });
-      } else {
-        burstParticles.push({
-          kind: "bpetal", delay: Math.random() * 150,
-          x: cx + (Math.random() - 0.5) * 70, y: cy + (Math.random() - 0.5) * 70,
-          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.5,
-          g: 0.075, drag: 0.984,
-          w: 4.5 + Math.random() * 6, h: 3 + Math.random() * 3.5,
-          rot: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 0.25,
-          life: 1, decay: 0.008 + Math.random() * 0.006,
-          color,
+      }
+      for (let i = 0; i < 26; i++) {
+        const a = rand(0, Math.PI * 2), sp = rand(3, 8);
+        pushShape({
+          img: sprite("petal", pick(MARIGOLD)),
+          x: cx + rand(-70, 70), y: cy + rand(-60, 60),
+          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2.4,
+          size: rand(10, 18), g: 0.06, decay: rand(0.006, 0.011), delay: rand(0, 200),
+        });
+      }
+    } else if (key === "haldi") {
+      // holi: paint splats burst out and powder clouds bloom
+      for (let i = 0; i < 24; i++) {
+        const a = rand(0, Math.PI * 2), sp = rand(3, 9);
+        pushShape({
+          img: sprite("splat", pick(HOLI), (Math.random() * 4) | 0),
+          x: cx + rand(-50, 50), y: cy + rand(-40, 40),
+          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.6,
+          size: rand(12, 26), g: 0.085, drag: 0.978,
+          decay: rand(0.008, 0.013), delay: rand(0, 160),
+        });
+      }
+      for (let i = 0; i < 9; i++) {
+        pushShape({
+          kind: "puff", color: pick(HOLI),
+          x: cx + rand(-100, 100), y: cy + rand(-70, 70),
+          vx: rand(-1.2, 1.2), vy: rand(-1.6, 0.3),
+          size: rand(26, 44), scaleV: rand(0.015, 0.03),
+          g: -0.004, drag: 0.985, decay: rand(0.011, 0.016), delay: rand(0, 220),
+        });
+      }
+    } else if (key === "sangeet") {
+      // firecrackers: rockets rise then explode into star sparks
+      for (let s = 0; s < 3; s++) {
+        pushShape({
+          kind: "rocket", color: pick(CRACKER),
+          x: W * rand(0.25, 0.75), y: H + 12,
+          vx: rand(-0.7, 0.7), vy: rand(-13.5, -11),
+          targetY: H * rand(0.18, 0.4),
+          g: 0.12, drag: 1, decay: 0.0001, delay: s * 380, trail: [],
+        });
+      }
+    } else if (key === "lagan") {
+      // rose petal shower
+      for (let i = 0; i < 34; i++) {
+        const a = rand(0, Math.PI * 2), sp = rand(2.5, 7.5);
+        pushShape({
+          img: sprite("rose", pick(ROSE)),
+          x: cx + rand(-70, 70), y: cy + rand(-60, 60),
+          vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2.2,
+          size: rand(12, 22), g: 0.055, decay: rand(0.005, 0.009), delay: rand(0, 220),
         });
       }
     }
   }
 
-  function drawBursts() {
-    const now = Date.now();
-    for (let i = burstParticles.length - 1; i >= 0; i--) {
-      const p = burstParticles[i];
-      if (p.delay > 0) { p.delay -= 16.7; continue; }
-      p.vx *= p.drag;
-      p.vy = p.vy * p.drag + p.g;
-      p.x += p.vx;
-      p.y += p.vy;
-      p.life -= p.decay;
-      if (p.life <= 0 || p.y > H + 30) { burstParticles.splice(i, 1); continue; }
-
-      if (p.kind === "spark") {
-        p.tw += p.tws;
-        const a = p.life * (0.6 + 0.4 * Math.sin(p.tw));
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3.2);
-        g.addColorStop(0, p.color);
-        g.addColorStop(1, "transparent");
-        ctx.globalAlpha = Math.max(0, a);
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 3.2, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (p.kind === "blob") {
-        ctx.globalAlpha = Math.max(0, p.life * 0.85);
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-        g.addColorStop(0, p.color);
-        g.addColorStop(1, "transparent");
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        p.rot += p.vr;
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
-        ctx.globalAlpha = Math.max(0, p.life * 0.9);
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, p.w, p.h, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
+  function explodeRocket(p) {
+    for (let i = 0; i < 26; i++) {
+      const a = (Math.PI * 2 * i) / 26 + rand(-0.12, 0.12);
+      const sp = rand(2.2, 6.2);
+      pushShape({
+        kind: "spark", img: sprite("star", pick(CRACKER)),
+        x: p.x, y: p.y,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+        size: rand(7, 13), g: 0.05, drag: 0.972,
+        decay: rand(0.009, 0.015), tw: rand(0, Math.PI * 2), trail: [],
+      });
     }
-    ctx.globalAlpha = 1;
   }
 
   let rafPaused = document.hidden;
@@ -576,50 +615,69 @@
     if (rafPaused) return;
     ctx.clearRect(0, 0, W, H);
 
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
+    for (let i = burstParticles.length - 1; i >= 0; i--) {
+      const p = burstParticles[i];
+      if (p.delay > 0) { p.delay -= 16.7; continue; }
 
-      if (p.dying) {
-        p.alpha -= 0.012;
-        if (p.alpha <= 0) {
-          particles.splice(i, 1);
-          continue;
+      p.sway += p.swayS || 0;
+      p.vx *= p.drag;
+      p.vy = p.vy * p.drag + p.g;
+      p.x += p.vx + (p.swayA ? Math.sin(p.sway) * p.swayA * 0.35 : 0);
+      p.y += p.vy;
+      p.rot += p.vr;
+      p.scale += p.scaleV;
+      p.life -= p.decay;
+
+      if (p.kind === "rocket" && (p.y <= p.targetY || p.vy > -1)) {
+        explodeRocket(p);
+        burstParticles.splice(i, 1);
+        continue;
+      }
+      if (p.life <= 0 || p.y > H + 60) { burstParticles.splice(i, 1); continue; }
+
+      if (p.trail) {
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 6) p.trail.shift();
+        ctx.strokeStyle = p.color || "#ffd76e";
+        ctx.lineCap = "round";
+        for (let t = 1; t < p.trail.length; t++) {
+          ctx.globalAlpha = (t / p.trail.length) * 0.4 * Math.max(0, p.life);
+          ctx.lineWidth = t * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(p.trail[t - 1].x, p.trail[t - 1].y);
+          ctx.lineTo(p.trail[t].x, p.trail[t].y);
+          ctx.stroke();
         }
       }
 
-      if (p.kind === "spark") {
-        p.tw += p.tws;
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.y < -12 && !p.dying) Object.assign(p, makeParticle(currentTheme));
-        const a = p.alpha * (0.55 + 0.45 * Math.sin(p.tw));
+      if (p.kind === "rocket") {
+        ctx.globalAlpha = 0.95;
+        ctx.fillStyle = "#fff3c4";
         ctx.beginPath();
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
+        ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (p.kind === "puff") {
+        const r = p.size * p.scale;
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
         g.addColorStop(0, p.color);
-        g.addColorStop(1, "transparent");
-        ctx.globalAlpha = a;
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.globalAlpha = Math.max(0, p.life * 0.5);
         ctx.fillStyle = g;
-        ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
         ctx.fill();
       } else {
-        p.sway += p.swayS;
-        p.rot += p.vr;
-        p.x += p.vx + Math.sin(p.sway) * p.swayA * 0.4;
-        p.y += p.vy;
-        if (p.y > H + 24 && !p.dying) Object.assign(p, makeParticle(currentTheme));
+        const twinkle = p.kind === "spark" ? 0.65 + 0.35 * Math.sin((p.tw += 0.3)) : 1;
+        const s = p.size * p.scale;
         ctx.save();
         ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot + Math.sin(p.sway) * 0.4);
-        ctx.globalAlpha = p.alpha;
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, p.w, p.h, 0, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 1.15)) * twinkle;
+        ctx.drawImage(p.img, -s / 2, -s / 2, s, s);
         ctx.restore();
       }
     }
     ctx.globalAlpha = 1;
-    drawBursts();
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
