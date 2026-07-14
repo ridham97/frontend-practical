@@ -161,17 +161,17 @@
 
   const heroTl = gsap.timeline({ paused: true });
   heroTl
-    .to(".hero__corner", { opacity: 0.9, scale: 1, duration: 1.1, stagger: 0.08, ease: "power3.out" })
-    .to(".hero__ganesh", { y: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, "-=0.8")
-    .to(".hero__pre-wrap", { y: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, "-=0.6")
-    .to(".hero__name--amee", { x: 0, opacity: 1, duration: 1.2, ease: "power3.out" }, "-=0.5")
-    .to(".hero__amp", { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(2.5)" }, "-=0.7")
-    .to(".hero__name--ridham", { x: 0, opacity: 1, duration: 1.2, ease: "power3.out" }, "-=1.0")
-    .to(".hero__invite", { y: 0, opacity: 1, duration: 0.8 }, "-=0.5")
-    .to(".hero__date-badge", { y: 0, opacity: 1, duration: 0.8 }, "-=0.5")
-    .to(".hero__place", { y: 0, opacity: 1, duration: 0.8 }, "-=0.55")
-    .to(".hero__cd-wrap", { y: 0, opacity: 1, duration: 0.9 }, "-=0.5")
-    .to(".hero__scroll", { opacity: 1, duration: 1 }, "-=0.3");
+    .to(".hero__corner", { opacity: 0.9, scale: 1, duration: 0.8, stagger: 0.05, ease: "power3.out" })
+    .to(".hero__ganesh", { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, "-=0.7")
+    .to(".hero__pre-wrap", { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, "-=0.5")
+    .to(".hero__name--amee", { x: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, "-=0.45")
+    .to(".hero__amp", { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(2.5)" }, "-=0.6")
+    .to(".hero__name--ridham", { x: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, "-=0.8")
+    .to(".hero__invite", { y: 0, opacity: 1, duration: 0.6 }, "-=0.5")
+    .to(".hero__date-badge", { y: 0, opacity: 1, duration: 0.6 }, "-=0.4")
+    .to(".hero__place", { y: 0, opacity: 1, duration: 0.6 }, "-=0.42")
+    .to(".hero__cd-wrap", { y: 0, opacity: 1, duration: 0.7 }, "-=0.42")
+    .to(".hero__scroll", { opacity: 1, duration: 0.8 }, "-=0.3");
 
   onLoaderDone = () => setTimeout(() => heroTl.play(), 250);
   if (loader.classList.contains("is-done")) onLoaderDone();
@@ -192,7 +192,7 @@
 
   /* ─────────────── Generic reveals ─────────────── */
 
-  document.querySelectorAll(".intro .reveal, .timeline .reveal, .venue .reveal").forEach((el) => {
+  document.querySelectorAll(".intro .reveal, .family .reveal, .venue .reveal").forEach((el) => {
     gsap.fromTo(
       el,
       { y: 36, opacity: 0 },
@@ -279,10 +279,10 @@
 
     // whole section gently floats out as you leave (keeps flow continuous)
     gsap.to(section.querySelector(".event__inner"), {
-      yPercent: -6,
-      opacity: 0.35,
+      yPercent: -3,
+      opacity: 0.6,
       ease: "none",
-      scrollTrigger: { trigger: section, start: "bottom 60%", end: "bottom 10%", scrub: true },
+      scrollTrigger: { trigger: section, start: "bottom 45%", end: "bottom 8%", scrub: true },
     });
   });
 
@@ -310,19 +310,6 @@
   } else {
     eventVideos.forEach((v) => v.play().catch(() => {}));
   }
-
-  /* ─────────────── Timeline progress line ─────────────── */
-
-  gsap.to("#timeline-progress", {
-    height: "100%",
-    ease: "none",
-    scrollTrigger: {
-      trigger: ".timeline__track",
-      start: "top 75%",
-      end: "bottom 55%",
-      scrub: 0.5,
-    },
-  });
 
   /* ═══════════════ PARTICLES — themed per section ═══════════════ */
 

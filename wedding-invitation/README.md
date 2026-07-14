@@ -1,16 +1,16 @@
 # Amee ♥ Ridham — Wedding Invitation
 
 A cinematic, mobile-first single-page wedding invitation for a Gujarati wedding
-in Rajkot — 28 & 29 January 2026.
+in Rajkot — 28 & 29 January 2027.
 
 ## Events
 
-| # | Event            | Date   | Time     | Dress theme     |
-|---|------------------|--------|----------|-----------------|
-| 1 | Mandvo (માંડવો)  | 28 Jan | 9:00 AM  | Green           |
-| 2 | Haldi (હળદી)     | 28 Jan | 11:00 AM | Purple / Violet |
-| 3 | Sanji (સાંજી)    | 28 Jan | 7:00 PM  | Open theme      |
-| 4 | Lagan (લગ્ન)     | 29 Jan | 7:00 PM  | Open theme      |
+| # | Event            | Date        | Time     |
+|---|------------------|-------------|----------|
+| 1 | Mandvo (માંડવો)  | Thu 28 Jan  | 9:00 AM  |
+| 2 | Haldi (હળદી)     | Thu 28 Jan  | 11:00 AM |
+| 3 | Sanji (સાંજી)    | Thu 28 Jan  | 7:00 PM  |
+| 4 | Lagan (લગ્ન)     | Fri 29 Jan  | 7:00 PM  |
 
 Venue: **OTB Rajkot**, Nyari Dam 1 Road, Kalavad Road, Rajkot, Gujarat 360005.
 
@@ -25,8 +25,10 @@ Venue: **OTB Rajkot**, Nyari Dam 1 Road, Kalavad Road, Rajkot, Gujarat 360005.
 - **Themed particle engine** — canvas particles switch with the active event:
   marigold petals (hero), white flowers (Mandvo), purple petals + turmeric
   specks (Haldi), golden bokeh (Sanji), rose petals (Lagan).
-- **Buttery smooth scrolling** via Lenis, live countdown, section progress
-  dots, and a Get Directions link to the venue.
+- **Living decor** — every event scene is a looping ambient video (Higgsfield
+  image-to-video): swaying leaves, rippling drapes, twinkling lights.
+- **Buttery smooth scrolling** via Lenis, live countdown, bride & groom family
+  cards, section progress dots, and a Get Directions link to the venue.
 - **Cinematic 4K artwork** (3072×5504) generated with Higgsfield AI
   (Nano Banana Pro), one bespoke scene per event.
 - **Fully self-contained** — GSAP, Lenis and all fonts (including the Gujarati
