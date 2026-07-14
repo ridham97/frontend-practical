@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a0f0a" />
+  <meta name="description" content="Amee & Ridham — Wedding Invitation · 28 & 29 January 2026 · Rajkot, Gujarat" />
+  <title>Amee ♥ Ridham — Wedding Invitation</title>
+
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════ LOADER ═══════════════ -->
+  <div class="loader" id="loader">
+    <div class="loader__ring">
+      <svg viewBox="0 0 120 120">
+        <circle class="loader__circle" cx="60" cy="60" r="54" />
+      </svg>
+      <div class="loader__monogram">
+        <span>A</span><em>♥</em><span>R</span>
+      </div>
+    </div>
+    <p class="loader__text">શ્રી ગણેશાય નમઃ</p>
+  </div>
+
+  <!-- ═══════════════ FIXED BACKDROP (color morphs while scrolling) ═══════════════ -->
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- ═══════════════ PARTICLES CANVAS (theme changes per event) ═══════════════ -->
+  <canvas id="particles" class="particles" aria-hidden="true"></canvas>
+
+  <!-- ═══════════════ PROGRESS DOTS ═══════════════ -->
+  <nav class="dots" id="dots" aria-label="Sections">
+    <a href="#hero"    class="dots__dot" data-label="Home"></a>
+    <a href="#mandvo"  class="dots__dot" data-label="Mandvo"></a>
+    <a href="#haldi"   class="dots__dot" data-label="Haldi"></a>
+    <a href="#sangeet" class="dots__dot" data-label="Sanji"></a>
+    <a href="#lagan"   class="dots__dot" data-label="Lagan"></a>
+    <a href="#venue"   class="dots__dot" data-label="Venue"></a>
+  </nav>
+
+  <main id="smooth-content">
+
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <section class="hero panel" id="hero">
+      <div class="hero__bg parallax-bg">
+        <img src="img/hero.jpg" alt="" fetchpriority="high" />
+        <div class="hero__veil"></div>
+      </div>
+
+      <div class="hero__content">
+        <p class="hero__ganesh reveal">|| શ્રી ગણેશાય નમઃ ||</p>
+        <p class="hero__pre reveal">Together with their families</p>
+
+        <h1 class="hero__names">
+          <span class="hero__name hero__name--amee">Amee</span>
+          <span class="hero__amp"><i>&amp;</i></span>
+          <span class="hero__name hero__name--ridham">Ridham</span>
+        </h1>
+
+        <p class="hero__invite reveal">joyfully invite you to celebrate their wedding</p>
+
+        <div class="hero__date reveal">
+          <span class="hero__date-line"></span>
+          <p class="hero__date-main">28 <em>&amp;</em> 29 January 2026</p>
+          <span class="hero__date-line"></span>
+        </div>
+
+        <p class="hero__place reveal">Rajkot · Gujarat</p>
+
+        <div class="hero__countdown reveal" id="countdown">
+          <div class="cd"><b id="cd-d">00</b><i>Days</i></div>
+          <div class="cd"><b id="cd-h">00</b><i>Hours</i></div>
+          <div class="cd"><b id="cd-m">00</b><i>Mins</i></div>
+          <div class="cd"><b id="cd-s">00</b><i>Secs</i></div>
+        </div>
+      </div>
+
+      <div class="hero__scroll">
+        <span class="hero__scroll-text">Scroll to unfold</span>
+        <span class="hero__scroll-line"></span>
+      </div>
+    </section>
+
+    <!-- ═══════════════ INTRO STRIP ═══════════════ -->
+    <section class="intro">
+      <div class="intro__inner">
+        <span class="intro__flourish">❦</span>
+        <p class="intro__text reveal">
+          Two hearts, two families, one beautiful journey —
+          join us across two days of rituals, colours,
+          music &amp; love, the Gujarati way.
+        </p>
+        <div class="intro__events reveal">
+          <span>માંડવો</span><i>·</i><span>હળદી</span><i>·</i><span>સાંજી</span><i>·</i><span>લગ્ન</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ EVENT 1 · MANDVO ═══════════════ -->
+    <section class="event panel" id="mandvo" data-theme="mandvo">
+      <div class="event__inner">
+        <header class="event__head">
+          <span class="event__no">01</span>
+          <p class="event__guj">માંડવો</p>
+          <h2 class="event__title"><span>M</span><span>a</span><span>n</span><span>d</span><span>v</span><span>o</span></h2>
+          <p class="event__sub">The auspicious beginning</p>
+        </header>
+
+        <figure class="event__card tilt-card">
+          <div class="event__card-frame">
+            <img src="img/mandvo.jpg" alt="Mandvo decoration — green foliage with white flowers" loading="lazy" />
+            <span class="event__card-shine"></span>
+          </div>
+          <span class="event__card-border"></span>
+        </figure>
+
+        <div class="event__details">
+          <div class="detail">
+            <span class="detail__icon">✦</span>
+            <div><b>Wednesday, 28 January 2026</b><i>Morning · 9:00 AM</i></div>
+          </div>
+          <div class="detail">
+            <span class="detail__icon">✿</span>
+            <div><b>Dress Theme</b><i>Shades of <em class="theme-chip theme-chip--green">Green</em></i></div>
+          </div>
+          <p class="event__desc">
+            Under a canopy of fresh greens and white blooms, the sacred
+            mandvo is raised — Lord Ganesha is invoked and the
+            celebrations officially begin.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ EVENT 2 · HALDI ═══════════════ -->
+    <section class="event panel" id="haldi" data-theme="haldi">
+      <div class="event__inner">
+        <header class="event__head">
+          <span class="event__no">02</span>
+          <p class="event__guj">હળદી</p>
+          <h2 class="event__title"><span>H</span><span>a</span><span>l</span><span>d</span><span>i</span></h2>
+          <p class="event__sub">A golden glow of blessings</p>
+        </header>
+
+        <figure class="event__card tilt-card">
+          <div class="event__card-frame">
+            <img src="img/haldi.jpg" alt="Haldi decoration — purple drapes and flowers" loading="lazy" />
+            <span class="event__card-shine"></span>
+          </div>
+          <span class="event__card-border"></span>
+        </figure>
+
+        <div class="event__details">
+          <div class="detail">
+            <span class="detail__icon">✦</span>
+            <div><b>Wednesday, 28 January 2026</b><i>Morning · 11:00 AM</i></div>
+          </div>
+          <div class="detail">
+            <span class="detail__icon">✿</span>
+            <div><b>Dress Theme</b><i>Shades of <em class="theme-chip theme-chip--purple">Purple / Violet</em></i></div>
+          </div>
+          <p class="event__desc">
+            Amidst violet drapes and orchid strings, turmeric and
+            laughter are showered on the bride and groom — for luck,
+            for glow, for love.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ EVENT 3 · SANJI ═══════════════ -->
+    <section class="event panel" id="sangeet" data-theme="sangeet">
+      <div class="event__inner">
+        <header class="event__head">
+          <span class="event__no">03</span>
+          <p class="event__guj">સાંજી</p>
+          <h2 class="event__title"><span>S</span><span>a</span><span>n</span><span>j</span><span>i</span></h2>
+          <p class="event__sub">A night of music &amp; garba</p>
+        </header>
+
+        <figure class="event__card tilt-card">
+          <div class="event__card-frame">
+            <img src="img/sangeet.jpg" alt="Sanji / Sangeet decoration — black and golden lights" loading="lazy" />
+            <span class="event__card-shine"></span>
+          </div>
+          <span class="event__card-border"></span>
+        </figure>
+
+        <div class="event__details">
+          <div class="detail">
+            <span class="detail__icon">✦</span>
+            <div><b>Wednesday, 28 January 2026</b><i>Evening · 7:00 PM</i></div>
+          </div>
+          <div class="detail">
+            <span class="detail__icon">✿</span>
+            <div><b>Dress Theme</b><i>Open theme — <em class="theme-chip theme-chip--gold">dress to dazzle</em></i></div>
+          </div>
+          <p class="event__desc">
+            When the sun sets, a thousand golden lights take over —
+            dhol, garba and sangeet under a glittering night sky.
+            Bring your best moves.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ EVENT 4 · LAGAN ═══════════════ -->
+    <section class="event panel" id="lagan" data-theme="lagan">
+      <div class="event__inner">
+        <header class="event__head">
+          <span class="event__no">04</span>
+          <p class="event__guj">લગ્ન</p>
+          <h2 class="event__title"><span>L</span><span>a</span><span>g</span><span>a</span><span>n</span></h2>
+          <p class="event__sub">The wedding · સપ્તપદી</p>
+        </header>
+
+        <figure class="event__card tilt-card">
+          <div class="event__card-frame">
+            <img src="img/lagan.jpg" alt="Wedding mandap covered in flowers" loading="lazy" />
+            <span class="event__card-shine"></span>
+          </div>
+          <span class="event__card-border"></span>
+        </figure>
+
+        <div class="event__details">
+          <div class="detail">
+            <span class="detail__icon">✦</span>
+            <div><b>Thursday, 29 January 2026</b><i>Evening · 7:00 PM</i></div>
+          </div>
+          <div class="detail">
+            <span class="detail__icon">✿</span>
+            <div><b>Dress Theme</b><i>Open theme — <em class="theme-chip theme-chip--rose">festive best</em></i></div>
+          </div>
+          <p class="event__desc">
+            Beneath a mandap woven entirely of flowers, Amee and Ridham
+            take the sacred pheras — seven steps, seven vows,
+            one lifetime together.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ TIMELINE ═══════════════ -->
+    <section class="timeline">
+      <h2 class="timeline__title reveal">The Two Days</h2>
+      <div class="timeline__track">
+        <div class="timeline__line"><span id="timeline-progress"></span></div>
+
+        <div class="tl-item reveal" data-dot="green">
+          <span class="tl-item__dot"></span>
+          <div class="tl-item__body">
+            <b>Mandvo</b><span>28 Jan · 9:00 AM</span><i>Green theme</i>
+          </div>
+        </div>
+        <div class="tl-item reveal" data-dot="purple">
+          <span class="tl-item__dot"></span>
+          <div class="tl-item__body">
+            <b>Haldi</b><span>28 Jan · 11:00 AM</span><i>Purple theme</i>
+          </div>
+        </div>
+        <div class="tl-item reveal" data-dot="gold">
+          <span class="tl-item__dot"></span>
+          <div class="tl-item__body">
+            <b>Sanji</b><span>28 Jan · 7:00 PM</span><i>Open theme</i>
+          </div>
+        </div>
+        <div class="tl-item reveal" data-dot="rose">
+          <span class="tl-item__dot"></span>
+          <div class="tl-item__body">
+            <b>Lagan</b><span>29 Jan · 7:00 PM</span><i>Open theme</i>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ VENUE ═══════════════ -->
+    <section class="venue panel" id="venue">
+      <div class="venue__inner">
+        <span class="venue__flourish">❦</span>
+        <h2 class="venue__title reveal">The Venue</h2>
+        <p class="venue__name reveal">OTB Rajkot</p>
+        <p class="venue__addr reveal">
+          Nyari Dam 1 Road, Kalavad Road,<br />
+          Rajkot, Gujarat — 360005
+        </p>
+        <a
+          class="venue__btn reveal"
+          href="https://maps.app.goo.gl/QFzkhYbJTUQ63Zko6"
+          target="_blank"
+          rel="noopener"
+        >
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11Z" />
+            <circle cx="12" cy="10" r="2.6" />
+          </svg>
+          Get Directions
+        </a>
+        <p class="venue__note reveal">All four events will be held at the same venue.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <footer class="footer">
+      <p class="footer__guj">આપના આશીર્વાદ એ જ અમારી શોભા</p>
+      <p class="footer__text">Your presence &amp; blessings are the greatest gift.</p>
+      <h3 class="footer__names">Amee <em>♥</em> Ridham</h3>
+      <p class="footer__date">28 · 29 January 2026 — Rajkot</p>
+      <span class="footer__flourish">❦ ❦ ❦</span>
+    </footer>
+
+  </main>
+
+  <script src="js/vendor/gsap.min.js"></script>
+  <script src="js/vendor/ScrollTrigger.min.js"></script>
+  <script src="js/vendor/lenis.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
