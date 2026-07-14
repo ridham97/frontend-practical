@@ -97,25 +97,33 @@
     return;
   }
 
-  /* ─────────────── Backdrop colour morph (no hard breaks) ─────────────── */
+  /* ─────────────── Backdrop gradient crossfade (no hard breaks) ─────────────── */
 
-  const backdrop = document.getElementById("backdrop");
+  const layers = {};
+  document.querySelectorAll(".backdrop__layer").forEach((l) => (layers[l.dataset.key] = l));
+
   const themes = [
-    { sel: "#hero",    bg: "#1a0f0a" },
-    { sel: "#mandvo",  bg: "#0d2418" },
-    { sel: "#haldi",   bg: "#241335" },
-    { sel: "#sangeet", bg: "#0c0a07" },
-    { sel: "#lagan",   bg: "#2b1016" },
-    { sel: "#venue",   bg: "#14100b" },
+    { sel: "#hero",    key: "hero" },
+    { sel: "#mandvo",  key: "mandvo" },
+    { sel: "#haldi",   key: "haldi" },
+    { sel: "#sangeet", key: "sangeet" },
+    { sel: "#lagan",   key: "lagan" },
+    { sel: "#venue",   key: "venue" },
   ];
 
-  themes.forEach(({ sel, bg }) => {
+  function showLayer(key) {
+    Object.entries(layers).forEach(([k, el]) => {
+      gsap.to(el, { opacity: k === key ? 1 : 0, duration: 1.2, ease: "power2.out", overwrite: "auto" });
+    });
+  }
+
+  themes.forEach(({ sel, key }) => {
     ScrollTrigger.create({
       trigger: sel,
-      start: "top 55%",
-      end: "bottom 55%",
-      onEnter: () => gsap.to(backdrop, { backgroundColor: bg, duration: 1.1, ease: "power2.out" }),
-      onEnterBack: () => gsap.to(backdrop, { backgroundColor: bg, duration: 1.1, ease: "power2.out" }),
+      start: "top 70%",
+      end: "bottom 70%",
+      onEnter: () => showLayer(key),
+      onEnterBack: () => showLayer(key),
     });
   });
 
@@ -366,8 +374,8 @@
   sectionThemeMap.forEach(({ sel, key }) => {
     ScrollTrigger.create({
       trigger: sel,
-      start: "top 55%",
-      end: "bottom 55%",
+      start: "top 70%",
+      end: "bottom 70%",
       onEnter: () => setTheme(PARTICLE_THEMES[key]),
       onEnterBack: () => setTheme(PARTICLE_THEMES[key]),
     });

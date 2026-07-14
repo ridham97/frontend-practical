@@ -120,7 +120,39 @@ img { max-width: 100%; display: block; }
   inset: 0;
   z-index: -2;
   background: var(--bg);
-  transition: background 0.6s linear;
+}
+
+.backdrop__layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  will-change: opacity;
+}
+
+.backdrop__layer.is-on { opacity: 1; }
+
+.backdrop__layer[data-key="hero"] {
+  background: radial-gradient(ellipse at 50% 20%, #3a2113 0%, #241408 45%, #140b06 100%);
+}
+
+.backdrop__layer[data-key="mandvo"] {
+  background: radial-gradient(ellipse at 50% 22%, #1f6b40 0%, #114a2b 40%, #072716 100%);
+}
+
+.backdrop__layer[data-key="haldi"] {
+  background: radial-gradient(ellipse at 50% 22%, #63329c 0%, #43216e 40%, #200e3d 100%);
+}
+
+.backdrop__layer[data-key="sangeet"] {
+  background: radial-gradient(ellipse at 50% 22%, #3d2e10 0%, #1c1509 45%, #0a0704 100%);
+}
+
+.backdrop__layer[data-key="lagan"] {
+  background: radial-gradient(ellipse at 50% 22%, #8a2f42 0%, #5c1e2c 40%, #2b0d15 100%);
+}
+
+.backdrop__layer[data-key="venue"] {
+  background: radial-gradient(ellipse at 50% 25%, #3a2d18 0%, #1e170d 55%, #100c07 100%);
 }
 
 .particles {
@@ -412,6 +444,16 @@ main { position: relative; z-index: 2; }
   perspective: 1000px;
 }
 
+/* ambient glow carried by the section itself — theme colour is always
+   visible over the event, independent of the backdrop crossfade */
+.event::before {
+  content: "";
+  position: absolute;
+  inset: -6% 0;
+  background: radial-gradient(ellipse 120% 55% at 50% 42%, var(--glow, transparent) 0%, transparent 70%);
+  pointer-events: none;
+}
+
 .event__inner {
   width: 100%;
   max-width: 430px;
@@ -566,10 +608,10 @@ main { position: relative; z-index: 2; }
 
 /* per-event accent */
 
-.event[data-theme="mandvo"]  { --accent: var(--mandvo-accent); }
-.event[data-theme="haldi"]   { --accent: var(--haldi-accent); }
-.event[data-theme="sangeet"] { --accent: var(--sangeet-accent); }
-.event[data-theme="lagan"]   { --accent: var(--lagan-accent); }
+.event[data-theme="mandvo"]  { --accent: var(--mandvo-accent);  --glow: rgba(38, 132, 78, 0.38); }
+.event[data-theme="haldi"]   { --accent: var(--haldi-accent);   --glow: rgba(126, 66, 194, 0.42); }
+.event[data-theme="sangeet"] { --accent: var(--sangeet-accent); --glow: rgba(150, 112, 32, 0.30); }
+.event[data-theme="lagan"]   { --accent: var(--lagan-accent);   --glow: rgba(196, 68, 90, 0.38); }
 
 /* ─────────────── Timeline ─────────────── */
 

@@ -25,8 +25,15 @@
     <p class="loader__text">શ્રી ગણેશાય નમઃ</p>
   </div>
 
-  <!-- ═══════════════ FIXED BACKDROP (color morphs while scrolling) ═══════════════ -->
-  <div class="backdrop" id="backdrop"></div>
+  <!-- ═══════════════ FIXED BACKDROP (gradient crossfades while scrolling) ═══════════════ -->
+  <div class="backdrop" id="backdrop">
+    <div class="backdrop__layer is-on" data-key="hero"></div>
+    <div class="backdrop__layer" data-key="mandvo"></div>
+    <div class="backdrop__layer" data-key="haldi"></div>
+    <div class="backdrop__layer" data-key="sangeet"></div>
+    <div class="backdrop__layer" data-key="lagan"></div>
+    <div class="backdrop__layer" data-key="venue"></div>
+  </div>
 
   <!-- ═══════════════ PARTICLES CANVAS (theme changes per event) ═══════════════ -->
   <canvas id="particles" class="particles" aria-hidden="true"></canvas>
