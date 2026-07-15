@@ -9,122 +9,161 @@ export function guDigits(value: string): string {
   return value.replace(/[0-9]/g, (d) => map[d]);
 }
 
-export const COUPLE = {
-  groomEn: "Ridham",
-  groomGu: "રિધમ",
-  groomParentsEn: "S/O Mrs. Hansaben & Mr. Rameshbhai Sherathiya",
-  groomParentsGu: "શ્રીમતી હંસાબેન તથા શ્રી રમેશભાઈ શેરઠિયાના સુપુત્ર",
+/** Fixed labels that frame the editable content. */
+export const TEXTS = {
+  ganeshEn: "|| Shree Ganeshay Namah ||",
+  ganeshGu: "|| શ્રી ગણેશાય નમઃ ||",
+  toEn: "To,",
+  toGu: "સ્નેહીશ્રી,",
+  weddingOfEn: "The Wedding Of",
+  weddingOfGu: "શુભ વિવાહ",
+  invitationEn: "Wedding Invitation",
+  invitationGu: "લગ્નોત્સવ",
+  withEn: "weds",
+  withGu: "ના શુભ લગ્ન",
+  awaitingEn: "Awaiting Your Presence",
+  awaitingGu: "દર્શનાભિલાષી",
+  withLoveEn: "With Love",
+  withLoveGu: "મધુર ટહુકો",
+  bestWishesEn: "Best Wishes",
+  bestWishesGu: "શુભેચ્છક",
+  venueLabelEn: "Venue",
+  venueLabelGu: "સ્થળ",
+  viewLocationEn: "📍 View Location",
+  viewLocationGu: "📍 લોકેશન જુઓ",
+};
+
+/** Everything printed on the invitation, fully editable in the studio form. */
+export const DEFAULT_SETTINGS: WeddingSettings = {
   brideEn: "Amee",
   brideGu: "અમી",
+  groomEn: "Ridham",
+  groomGu: "રિધમ",
+  brideFirst: true,
   brideParentsEn: "D/O Mrs. Seemaben & Mr. Kishorbhai Kasondra",
   brideParentsGu: "શ્રીમતી સીમાબેન તથા શ્રી કિશોરભાઈ કાસોન્દ્રાની સુપુત્રી",
-  familyEn: "Sherathiya Family",
-  familyGu: "શેરઠિયા પરિવાર",
+  groomParentsEn: "S/O Mrs. Hansaben & Mr. Rameshbhai Sherathiya",
+  groomParentsGu: "શ્રીમતી હંસાબેન તથા શ્રી રમેશભાઈ શેરઠિયાના સુપુત્ર",
+
   datesEn: "28 & 29 January 2027",
-  datesGu: "તા. " + guDigits("28") + " તથા " + guDigits("29") + " જાન્યુઆરી " + guDigits("2027"),
+  datesGu: "તા. ૨૮ તથા ૨૯ જાન્યુઆરી ૨૦૨૭",
   cityEn: "Rajkot, Gujarat",
   cityGu: "રાજકોટ, ગુજરાત",
+
+  venueNameEn: "OTB Rajkot",
+  venueNameGu: "ઓ.ટી.બી. રાજકોટ",
+  venueAddressEn: "Nyari Dam 1 Road, Kalavad Road, Rajkot, Gujarat 360005",
+  venueAddressGu: "ન્યારી ડેમ ૧ રોડ, કાલાવડ રોડ, રાજકોટ, ગુજરાત ૩૬૦૦૦૫",
+  mapsUrl: "https://maps.app.goo.gl/YYAmwTaVeNr1HDDB8",
+
+  blessingEn:
+    "With the blessings of the Almighty and our elders, we solicit your gracious presence and blessings for the wedding celebrations of our beloved children.",
+  blessingGu:
+    "શ્રી ગણેશજી તથા વડીલોના આશીર્વાદથી, સહર્ષ જણાવવાનું કે અમારા આંગણે શુભ લગ્નોત્સવ નિર્ધારેલ છે. આ મંગલ પ્રસંગે નવદંપતિને આશીર્વાદ આપવા આપ સહપરિવાર પધારો એવું અમારું હાર્દિક નિમંત્રણ છે.",
+  poemEn:
+    "Two hearts, two families, one beautiful journey begins. Your presence will add fragrance to our celebration.",
+  poemGu:
+    "અમારા આંગણે લગ્ન લેવાય છે, ને આપની હાજરીથી સુગંધ ફેલાય છે. નિમંત્રણ નથી આ શબ્દોનું, પણ હૈયાનો કેરો સાદ — પધારશો જી!",
+  closingEn: "Your presence and blessings are our greatest gift.",
+  closingGu: "આપના આશીર્વાદ એ જ અમારી શોભા.",
+
+  events: {
+    mandvo: {
+      titleEn: "Mandvo",
+      titleGu: "માંડવો",
+      taglineEn: "The auspicious beginning",
+      taglineGu: "શુભ પ્રસંગની મંગલ શરૂઆત",
+      dateEn: "Thursday, 28 January 2027",
+      dateGu: "તા. ૨૮-૦૧-૨૦૨૭ ગુરુવાર",
+      timeEn: "Morning · 9:00 AM",
+      timeGu: "સવારે ૯:૦૦ કલાકે",
+    },
+    haldi: {
+      titleEn: "Haldi",
+      titleGu: "હળદી",
+      taglineEn: "A golden glow of blessings",
+      taglineGu: "આશીર્વાદની સોનેરી ઝળક",
+      dateEn: "Thursday, 28 January 2027",
+      dateGu: "તા. ૨૮-૦૧-૨૦૨૭ ગુરુવાર",
+      timeEn: "Morning · 11:00 AM",
+      timeGu: "સવારે ૧૧:૦૦ કલાકે",
+    },
+    sanji: {
+      titleEn: "Sanji",
+      titleGu: "સાંજી",
+      taglineEn: "A night of music & garba",
+      taglineGu: "સંગીત અને ગરબાની રઢિયાળી રાત",
+      dateEn: "Thursday, 28 January 2027",
+      dateGu: "તા. ૨૮-૦૧-૨૦૨૭ ગુરુવાર",
+      timeEn: "Evening · 7:00 PM",
+      timeGu: "સાંજે ૭:૦૦ કલાકે",
+    },
+    marriage: {
+      titleEn: "Marriage",
+      titleGu: "લગ્ન",
+      taglineEn: "The wedding ceremony",
+      taglineGu: "શુભ લગ્ન · હસ્તમેળાપ",
+      dateEn: "Friday, 29 January 2027",
+      dateGu: "તા. ૨૯-૦૧-૨૦૨૭ શુક્રવાર",
+      timeEn: "Hast Melap · 12:15 PM",
+      timeGu: "હસ્તમેળાપ · બપોરે ૧૨:૧૫ કલાકે",
+    },
+  },
+
+  awaitingEn: [
+    "Mrs. Hansaben & Mr. Rameshbhai Sherathiya",
+    "Mrs. Ramilaben & Mr. Jayeshbhai Sherathiya",
+    "Mrs. Nitaben & Mr. Mehulbhai Sherathiya",
+    "Mrs. Seemaben & Mr. Kishorbhai Kasondra",
+    "All Sherathiya & Kasondra Family",
+  ],
+  awaitingGu: [
+    "શ્રીમતી હંસાબેન તથા શ્રી રમેશભાઈ શેરઠિયા",
+    "શ્રીમતી રમીલાબેન તથા શ્રી જયેશભાઈ શેરઠિયા",
+    "શ્રીમતી નીતાબેન તથા શ્રી મેહુલભાઈ શેરઠિયા",
+    "શ્રીમતી સીમાબેન તથા શ્રી કિશોરભાઈ કાસોન્દ્રા",
+    "સમસ્ત શેરઠિયા તથા કાસોન્દ્રા પરિવાર",
+  ],
+  withLoveEn: ["Dhruvi", "Kavya", "Aarav"],
+  withLoveGu: ["ધ્રુવી", "કાવ્યા", "આરવ"],
+  bestWishesEn: ["Sherathiya Group", "Shreeji Enterprise, Rajkot"],
+  bestWishesGu: ["શેરઠિયા ગ્રુપ", "શ્રીજી એન્ટરપ્રાઇઝ, રાજકોટ"],
+
+  waToken: "",
+  waPhoneId: "",
 };
 
-export const VENUE = {
-  nameEn: "OTB Rajkot",
-  nameGu: "ઓ.ટી.બી. રાજકોટ",
-  addressEn: "Nyari Dam 1 Road, Kalavad Road, Rajkot, Gujarat 360005",
-  addressGu: "ન્યારી ડેમ ૧ રોડ, કાલાવડ રોડ, રાજકોટ, ગુજરાત ૩૬૦૦૦૫",
-  mapsUrl: "https://maps.google.com/?q=OTB+Rajkot+Nyari+Dam+1+Road+Kalavad+Road+Rajkot",
-};
-
-export interface EventInfo {
-  key: EventKey;
-  titleEn: string;
-  titleGu: string;
-  taglineEn: string;
-  taglineGu: string;
-  dayNumber: string;      // "28"
-  monthYearEn: string;    // "JAN 2027"
-  weekdayEn: string;      // "THURSDAY"
-  dateGu: string;         // "તા. ૨૮-૦૧-૨૦૨૭ ગુરુવાર"
-  timeEn: string;
-  timeGu: string;
-  descriptionEn: string;
-  descriptionGu: string;
-  bg: string;             // asset path
+/** Names in the couple's chosen order for a given language. */
+export function coupleNames(settings: WeddingSettings, lang: Lang): [string, string] {
+  const bride = lang === "gujarati" ? settings.brideGu : settings.brideEn;
+  const groom = lang === "gujarati" ? settings.groomGu : settings.groomEn;
+  return settings.brideFirst ? [bride, groom] : [groom, bride];
 }
 
-export const EVENTS: Record<EventKey, EventInfo> = {
-  mandvo: {
-    key: "mandvo",
-    titleEn: "Mandvo",
-    titleGu: "માંડવો",
-    taglineEn: "The auspicious beginning",
-    taglineGu: "શુભ પ્રસંગની મંગલ શરૂઆત",
-    dayNumber: "28",
-    monthYearEn: "JANUARY 2027",
-    weekdayEn: "THURSDAY",
-    dateGu: "તા. " + guDigits("28-01-2027") + " ગુરુવાર",
-    timeEn: "Morning · 9:00 AM",
-    timeGu: "સવારે ૯:૦૦ કલાકે",
-    descriptionEn:
-      "Under a canopy of fresh greens and white blooms, the sacred mandvo is raised and Lord Ganesha is invoked. The celebrations officially begin.",
-    descriptionGu:
-      "લીલાં તોરણ અને શ્વેત પુષ્પોની છાયામાં પવિત્ર માંડવો રોપાય છે અને શ્રી ગણેશજીનું સ્થાપન થાય છે. શુભ પ્રસંગનો મંગલ આરંભ.",
-    bg: "/assets/invite/event-mandvo.jpg",
-  },
-  haldi: {
-    key: "haldi",
-    titleEn: "Haldi",
-    titleGu: "હળદી",
-    taglineEn: "A golden glow of blessings",
-    taglineGu: "આશીર્વાદની સોનેરી ઝળક",
-    dayNumber: "28",
-    monthYearEn: "JANUARY 2027",
-    weekdayEn: "THURSDAY",
-    dateGu: "તા. " + guDigits("28-01-2027") + " ગુરુવાર",
-    timeEn: "Morning · 11:00 AM",
-    timeGu: "સવારે ૧૧:૦૦ કલાકે",
-    descriptionEn:
-      "Amidst marigolds and laughter, turmeric is showered on the bride and groom, for luck, for glow, for love.",
-    descriptionGu:
-      "ગલગોટાનાં ફૂલો અને હાસ્ય વચ્ચે વર-કન્યાને હળદર ચડાવાય છે — સૌભાગ્ય, તેજ અને પ્રેમ માટે.",
-    bg: "/assets/invite/event-haldi.jpg",
-  },
-  sanji: {
-    key: "sanji",
-    titleEn: "Sanji",
-    titleGu: "સાંજી",
-    taglineEn: "A night of music & garba",
-    taglineGu: "સંગીત અને ગરબાની રઢિયાળી રાત",
-    dayNumber: "28",
-    monthYearEn: "JANUARY 2027",
-    weekdayEn: "THURSDAY",
-    dateGu: "તા. " + guDigits("28-01-2027") + " ગુરુવાર",
-    timeEn: "Evening · 7:00 PM",
-    timeGu: "સાંજે ૭:૦૦ કલાકે",
-    descriptionEn:
-      "When the sun sets, a thousand golden lights take over — dhol, garba and sangeet under a glittering night sky. Bring your best moves.",
-    descriptionGu:
-      "સૂર્યાસ્ત પછી હજારો સોનેરી દીવડાઓ ઝગમગે છે — ઢોલ, ગરબા અને સંગીતની રમઝટ. તૈયાર રહેજો!",
-    bg: "/assets/invite/event-sanji.jpg",
-  },
-  marriage: {
-    key: "marriage",
-    titleEn: "Marriage",
-    titleGu: "લગ્ન",
-    taglineEn: "The wedding ceremony",
-    taglineGu: "શુભ લગ્ન · હસ્તમેળાપ",
-    dayNumber: "29",
-    monthYearEn: "JANUARY 2027",
-    weekdayEn: "FRIDAY",
-    dateGu: "તા. " + guDigits("29-01-2027") + " શુક્રવાર",
-    timeEn: "Hast Melap · 12:15 PM",
-    timeGu: "હસ્તમેળાપ · બપોરે ૧૨:૧૫ કલાકે",
-    descriptionEn:
-      "Beneath a mandap woven entirely of flowers, Amee and Ridham take the four sacred pheras — four vows, one lifetime together.",
-    descriptionGu:
-      "ફૂલોથી શણગારેલા મંડપ નીચે અમી અને રિધમ ચાર પવિત્ર ફેરા લેશે — ચાર વચન, જીવનભરનો સાથ.",
-    bg: "/assets/invite/event-marriage.jpg",
-  },
-};
+/** Merge a stored (possibly older-shaped) settings blob onto the defaults. */
+export function normalizeSettings(raw: unknown): WeddingSettings {
+  const base: WeddingSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS)) as WeddingSettings;
+  if (!raw || typeof raw !== "object") return base;
+  const src = raw as Record<string, unknown>;
+  for (const key of Object.keys(base) as Array<keyof WeddingSettings>) {
+    const value = src[key];
+    if (value === undefined || value === null) continue;
+    if (key === "events" && typeof value === "object") {
+      for (const ek of Object.keys(base.events) as EventKey[]) {
+        const ev = (value as Record<string, unknown>)[ek];
+        if (ev && typeof ev === "object") {
+          base.events[ek] = { ...base.events[ek], ...(ev as object) } as WeddingSettings["events"][EventKey];
+        }
+      }
+    } else if (Array.isArray(base[key]) ? Array.isArray(value) : typeof value === typeof base[key]) {
+      (base as unknown as Record<string, unknown>)[key] = value;
+    }
+  }
+  // migrate the old flat marriage-time fields if present
+  if (typeof src.marriageTimeEn === "string" && src.marriageTimeEn) base.events.marriage.timeEn = src.marriageTimeEn;
+  if (typeof src.marriageTimeGu === "string" && src.marriageTimeGu) base.events.marriage.timeGu = src.marriageTimeGu;
+  return base;
+}
 
 export const SALUTATIONS: Record<InviteType, { en: string; gu: string }> = {
   mr: { en: "Mr.", gu: "શ્રી" },
@@ -144,65 +183,12 @@ export function guestLine(name: string, inviteType: InviteType, lang: Lang): str
   return name + " & Family";
 }
 
-export const TEXTS = {
-  ganeshEn: "|| Shree Ganeshay Namah ||",
-  ganeshGu: "|| શ્રી ગણેશાય નમઃ ||",
-  umiyaGu: "|| શ્રી ઉમિયા માતાજી નમઃ ||",
-  toEn: "To,",
-  toGu: "સ્નેહીશ્રી,",
-  weddingOfEn: "The Wedding Of",
-  weddingOfGu: "શુભ વિવાહ",
-  invitationEn: "Wedding Invitation",
-  invitationGu: "લગ્નોત્સવ",
-  withEn: "weds",
-  withGu: "ના શુભ લગ્ન",
-  blessingEn:
-    "With the blessings of the Almighty and our elders, we solicit your gracious presence and blessings for the wedding celebrations of our beloved children.",
-  blessingGu:
-    "શ્રી ગણેશજી તથા વડીલોના આશીર્વાદથી, સહર્ષ જણાવવાનું કે અમારા આંગણે શુભ લગ્નોત્સવ નિર્ધારેલ છે. આ મંગલ પ્રસંગે નવદંપતિને આશીર્વાદ આપવા આપ સહપરિવાર પધારો એવું અમારું હાર્દિક નિમંત્રણ છે.",
-  poemEn:
-    "Two hearts, two families — one beautiful journey begins. Your presence will add fragrance to our celebration.",
-  poemGu:
-    "અમારા આંગણે લગ્ન લેવાય છે, ને આપની હાજરીથી સુગંધ ફેલાય છે. નિમંત્રણ નથી આ શબ્દોનું, પણ હૈયાનો કેરો સાદ — પધારશો જી!",
-  awaitingEn: "Awaiting Your Presence",
-  awaitingGu: "દર્શનાભિલાષી",
-  withLoveEn: "With Love",
-  withLoveGu: "મધુર ટહુકો",
-  bestWishesEn: "Best Wishes",
-  bestWishesGu: "શુભેચ્છક",
-  closingEn: "Your presence and blessings are our greatest gift.",
-  closingGu: "આપના આશીર્વાદ એ જ અમારી શોભા.",
-  venueLabelEn: "Venue",
-  venueLabelGu: "સ્થળ",
-  allEventsVenueEn: "All events will be held at the same venue.",
-  allEventsVenueGu: "તમામ પ્રસંગો એક જ સ્થળે યોજાશે.",
-  welcomeEn: "warmly welcomes you",
-  welcomeGu: "આપનું હાર્દિક સ્વાગત કરે છે",
-};
-
-export const DEFAULT_SETTINGS: WeddingSettings = {
-  marriageTimeEn: EVENTS.marriage.timeEn,
-  marriageTimeGu: EVENTS.marriage.timeGu,
-  awaitingEn: [
-    "Mrs. Hansaben & Mr. Rameshbhai Sherathiya",
-    "Mrs. Ramilaben & Mr. Jayeshbhai Sherathiya",
-    "Mrs. Nitaben & Mr. Mehulbhai Sherathiya",
-    "Mrs. Seemaben & Mr. Kishorbhai Kasondra",
-    "All Sherathiya & Kasondra Family",
-  ],
-  awaitingGu: [
-    "શ્રીમતી હંસાબેન તથા શ્રી રમેશભાઈ શેરઠિયા",
-    "શ્રીમતી રમીલાબેન તથા શ્રી જયેશભાઈ શેરઠિયા",
-    "શ્રીમતી નીતાબેન તથા શ્રી મેહુલભાઈ શેરઠિયા",
-    "શ્રીમતી સીમાબેન તથા શ્રી કિશોરભાઈ કાસોન્દ્રા",
-    "સમસ્ત શેરઠિયા તથા કાસોન્દ્રા પરિવાર",
-  ],
-  withLoveEn: ["Dhruvi", "Kavya", "Aarav"],
-  withLoveGu: ["ધ્રુવી", "કાવ્યા", "આરવ"],
-  bestWishesEn: ["Sherathiya Group", "Shreeji Enterprise, Rajkot"],
-  bestWishesGu: ["શેરઠિયા ગ્રુપ", "શ્રીજી એન્ટરપ્રાઇઝ, રાજકોટ"],
-  waToken: "",
-  waPhoneId: "",
+/** Per-event background artwork (design assets, not user content). */
+export const EVENT_BG: Record<EventKey, string> = {
+  mandvo: "/assets/invite/event-mandvo.jpg",
+  haldi: "/assets/invite/event-haldi.jpg",
+  sanji: "/assets/invite/event-sanji.jpg",
+  marriage: "/assets/invite/event-marriage.jpg",
 };
 
 export const ASSETS = {
@@ -214,28 +200,29 @@ export const ASSETS = {
 };
 
 /** WhatsApp message that travels with the PDF. */
-export function whatsappMessage(name: string, inviteType: InviteType, lang: Lang): string {
+export function whatsappMessage(name: string, inviteType: InviteType, lang: Lang, settings: WeddingSettings): string {
   const line = guestLine(name, inviteType, lang);
+  const [first, second] = coupleNames(settings, lang);
   if (lang === "gujarati") {
     return (
       "🌺 || શ્રી ગણેશાય નમઃ || 🌺\n\n" +
       line + ",\n\n" +
       "અમારા આંગણે શુભ લગ્નોત્સવ!\n\n" +
-      "💍 *અમી ♥ રિધમ* 💍\n" +
-      "📅 તા. ૨૮ તથા ૨૯ જાન્યુઆરી ૨૦૨૭\n" +
-      "📍 ઓ.ટી.બી., રાજકોટ\n\n" +
+      "💍 *" + first + " ♥ " + second + "* 💍\n" +
+      "📅 " + settings.datesGu + "\n" +
+      "📍 " + settings.venueNameGu + ", " + settings.cityGu + "\n\n" +
       "આપનું અંગત આમંત્રણ પત્રિકા સાથે જોડેલ છે. આ મંગલ પ્રસંગે આપ સહપરિવાર પધારી નવદંપતિને આશીર્વાદ આપશો એવી હાર્દિક વિનંતી.\n\n" +
-      "— શેરઠિયા પરિવાર"
+      "— " + (settings.brideFirst ? settings.brideGu : settings.groomGu) + " તથા " + (settings.brideFirst ? settings.groomGu : settings.brideGu) + "ના પરિવાર"
     );
   }
   return (
     "🌺 || Shree Ganeshay Namah || 🌺\n\n" +
     "Dear " + line + ",\n\n" +
     "With the blessings of our elders, we joyfully invite you to the wedding celebrations of\n\n" +
-    "💍 *Amee ♥ Ridham* 💍\n" +
-    "📅 28 & 29 January 2027\n" +
-    "📍 OTB, Rajkot\n\n" +
+    "💍 *" + first + " ♥ " + second + "* 💍\n" +
+    "📅 " + settings.datesEn + "\n" +
+    "📍 " + settings.venueNameEn + ", " + settings.cityEn + "\n\n" +
     "Your personal invitation is attached. Your presence and blessings are our greatest gift.\n\n" +
-    "— Sherathiya Family"
+    "— The " + first + " & " + second + " families"
   );
 }

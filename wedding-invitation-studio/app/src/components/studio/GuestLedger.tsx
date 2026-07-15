@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import type { EventKey, Guest, InviteType, Lang } from "../../lib/invite/types";
 import { EVENT_KEYS } from "../../lib/invite/types";
-import { EVENTS, SALUTATIONS, guestLine } from "../../lib/invite/wedding-data";
+import { SALUTATIONS, guestLine } from "../../lib/invite/wedding-data";
 import { normalizePhone } from "../../lib/invite/excel";
 
 const EVENT_INITIALS: Record<EventKey, string> = {
@@ -10,6 +10,13 @@ const EVENT_INITIALS: Record<EventKey, string> = {
   haldi: "H",
   sanji: "S",
   marriage: "L",
+};
+
+const EVENT_NAMES: Record<EventKey, string> = {
+  mandvo: "Mandvo",
+  haldi: "Haldi",
+  sanji: "Sanji",
+  marriage: "Marriage",
 };
 
 function formatPhone(phone: string): string {
@@ -95,7 +102,7 @@ export function GuestLedger({ guests, actions }: { guests: Guest[]; actions: Led
                   </span>
                 </td>
                 <td>
-                  <div className="flex gap-1" title={guest.events.map((e) => EVENTS[e].titleEn).join(", ")}>
+                  <div className="flex gap-1" title={guest.events.map((e) => EVENT_NAMES[e]).join(", ")}>
                     {EVENT_KEYS.map((key) => {
                       const active = guest.events.includes(key);
                       return (
@@ -234,7 +241,7 @@ function AddGuestRow({ onAdd }: { onAdd: LedgerActions["onAdd"] }) {
                   }
                   onClick={() => setEvents((prev) => (active ? prev.filter((k) => k !== key) : [...EVENT_KEYS.filter((k) => prev.includes(k) || k === key)]))}
                 >
-                  {EVENTS[key].titleEn}
+                  {EVENT_NAMES[key]}
                 </button>
               );
             })}

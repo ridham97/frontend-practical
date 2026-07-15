@@ -16,8 +16,8 @@ import {
 } from "../lib/api/invites.functions";
 import type { Guest, ParseResult, WeddingSettings } from "../lib/invite/types";
 import { buildAllPdfsZip, buildGuestPdf, downloadBlob, pdfFileName } from "../lib/invite/pdf";
-import { sendViaWhatsApp } from "../lib/invite/whatsapp";
-import { ASSETS, DEFAULT_SETTINGS, EVENTS } from "../lib/invite/wedding-data";
+import { pingExtension, sendViaWhatsApp } from "../lib/invite/whatsapp";
+import { ASSETS, DEFAULT_SETTINGS } from "../lib/invite/wedding-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -57,6 +57,7 @@ function Studio() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
   const [previewLang, setPreviewLang] = useState<"english" | "gujarati">("english");
+  const [extensionReady, setExtensionReady] = useState(false);
 
   const note = useCallback((message: string, tone: "ok" | "warn" | "err" = "ok") => {
     setToast({ message, tone });
@@ -64,6 +65,7 @@ function Studio() {
   }, []);
 
   useEffect(() => {
+    void pingExtension().then(setExtensionReady);
     void listGuests()
       .then((res) => {
         if (res.ok && res.guests.length) setGuests(res.guests);
@@ -243,8 +245,8 @@ function Studio() {
             </div>
             <div className="mt-10 flex flex-wrap gap-2">
               {(["mandvo", "haldi", "sanji", "marriage"] as const).map((key) => (
-                <span key={key} className="st-chip" title={EVENTS[key].taglineEn}>
-                  {EVENTS[key].titleEn} · {EVENTS[key].titleGu}
+                <span key={key} className="st-chip" title={settings.events[key].taglineEn}>
+                  {settings.events[key].titleEn} · {settings.events[key].titleGu}
                 </span>
               ))}
             </div>
@@ -309,14 +311,41 @@ function Studio() {
           <h3 className="st-serif text-2xl font-semibold" style={{ color: "var(--st-ink)" }}>
             3 · Dispatch on WhatsApp
           </h3>
+          <div className="mt-4 border p-4" style={{ borderColor: "rgba(31,122,83,0.4)", background: "rgba(31,122,83,0.05)" }}>
+            <p className="font-semibold" style={{ color: "var(--st-wa)" }}>
+              Recommended: the Studio's own WhatsApp sender extension (no API, no business account)
+            </p>
+            <p className="mt-1 text-sm" style={{ color: "var(--st-ink-soft)" }}>
+              Install it once in Chrome, keep WhatsApp Web logged in with your own number, and the
+              WhatsApp button sends each invitation PDF completely by itself: it opens the guest's
+              chat, attaches the PDF with the personalized message and presses send.
+            </p>
+            <ol className="mt-3 list-inside list-decimal space-y-1 text-sm" style={{ color: "var(--st-ink-soft)" }}>
+              <li>
+                <a href="/downloads/amee-ridham-whatsapp-sender.zip" className="font-semibold underline" style={{ color: "var(--st-wa)" }} download>
+                  Download the extension (zip)
+                </a>{" "}
+                and unzip it anywhere.
+              </li>
+              <li>Open <strong>chrome://extensions</strong>, switch on Developer mode (top right).</li>
+              <li>Click <strong>Load unpacked</strong> and pick the unzipped folder.</li>
+              <li>Open <a href="https://web.whatsapp.com" target="_blank" rel="noreferrer" className="underline">web.whatsapp.com</a> once and log in with your phone.</li>
+              <li>Refresh this page. The WhatsApp buttons now send automatically. {extensionReady ? "✓ Extension detected!" : ""}</li>
+            </ol>
+            {extensionReady && (
+              <p className="mt-2 text-sm font-semibold" style={{ color: "var(--st-wa)" }}>
+                ✓ Extension detected — sends will go out automatically through your WhatsApp Web.
+              </p>
+            )}
+          </div>
           <div className="mt-4 grid gap-6 text-sm leading-relaxed md:grid-cols-3" style={{ color: "var(--st-ink-soft)" }}>
             <div>
               <p className="font-semibold" style={{ color: "var(--st-ink)" }}>
                 On a phone
               </p>
               <p className="mt-1">
-                The WhatsApp button opens your share sheet with the PDF attached: pick WhatsApp,
-                pick the guest, send. The personalized message travels with it.
+                Without the extension, the WhatsApp button opens your share sheet with the PDF
+                attached: pick WhatsApp, pick the guest, send.
               </p>
             </div>
             <div>
@@ -324,17 +353,17 @@ function Studio() {
                 On a computer
               </p>
               <p className="mt-1">
-                The button opens the guest's chat in WhatsApp Web with the message typed in, and the
-                PDF downloads beside it. Drop the file into the chat and press send.
+                Without the extension, the button opens the guest's chat in WhatsApp Web with the
+                message typed in, and the PDF downloads beside it. Drop the file in and press send.
               </p>
             </div>
             <div>
               <p className="font-semibold" style={{ color: "var(--st-ink)" }}>
-                Fully automatic
+                Business API
               </p>
               <p className="mt-1">
-                Connect the free Meta WhatsApp Business Cloud API in the settings below and the
-                button delivers each PDF by itself, from your own registered number.
+                Only if you ever create a Meta business account: paste its credentials in the
+                settings below and delivery goes through the official API instead.
               </p>
             </div>
           </div>

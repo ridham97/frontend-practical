@@ -13,12 +13,14 @@ Wedding: **Amee ♥ Ridham · 28 & 29 January 2027 · OTB, Nyari Dam 1 Road, Kal
 
 A multi-page PDF (1080 x 1920, phone-friendly), built from AI-generated pichhwai artwork:
 
-1. **Cover** — "To, `<guest name>`" personalized (Mr. / Mr. & Mrs. / `<name>` & Family), the
-   A♥R monogram, couple names and dates.
+1. **Cover** — "To, `<guest name>`" personalized, plus the single
+   ☐ MR. ☐ MR. & MRS. ☑ FAMILY row (ticked once per PDF), the A♥R monogram, couple names
+   and dates.
 2. **Invitation page** — blessing text with both sets of parents' names.
 3. **One page per event the guest is invited to** — Mandvo (માંડવો), Haldi (હળદી),
-   Sanji (સાંજી), Marriage (લગ્ન) — each with the ☐ MR. ☐ MR. & MRS. ☑ FAMILY row ticked
-   for that guest, date, time, venue and a tappable "View Location" map link.
+   Sanji (સાંજી), Marriage (લગ્ન) — all four share one unified ivory-gold-sage theme,
+   each with date, time, venue and a tappable "View Location" map link
+   (https://maps.app.goo.gl/YYAmwTaVeNr1HDDB8, editable in the form).
 4. **Family page** — "Awaiting your presence" (દર્શનાભિલાષી) name lists (placeholder names
    for now — editable in Settings on the live site).
 
@@ -36,14 +38,19 @@ Download the template from the app ("Download Excel template"), or see
 | Events | `all`, or list: `mandvo, haldi, sanji, marriage` (numbers 1-4 also work) |
 | PDF Name | optional custom file name |
 
-## WhatsApp sending — three modes
+## WhatsApp sending — no API needed
 
+**Recommended: the bundled Chrome extension** (`whatsapp-extension/`, also downloadable
+from the live app). Load it once via chrome://extensions → Developer mode → Load unpacked,
+keep WhatsApp Web logged in with your own number, and the WhatsApp button in the studio
+sends each invitation completely by itself: opens the guest's chat, attaches the PDF with
+the personalized caption, presses send. No business account, no API.
+
+Fallbacks without the extension:
 1. **Phone**: the WhatsApp button opens the native share sheet with the PDF attached.
-2. **Desktop**: opens the guest's chat on WhatsApp Web with the personalized message
-   pre-typed and downloads the PDF beside it to drag into the chat.
-3. **Fully automatic** (optional): paste Meta WhatsApp Business Cloud API credentials
-   (phone number ID + permanent token) into Settings and the button uploads + delivers
-   each PDF automatically from the registered number — no clicks in WhatsApp at all.
+2. **Desktop**: opens the guest's chat on WhatsApp Web with the message pre-typed and
+   downloads the PDF beside it to drag into the chat.
+3. **Business API** (optional): paste Meta Cloud API credentials into Settings.
 
 Guest list, sent/pending status and wedding settings persist in the app's database (D1).
 
@@ -56,9 +63,14 @@ Guest list, sent/pending status and wedding settings persist in the app's databa
   (Cormorant Garamond, Great Vibes, Noto Serif Gujarati, Figtree).
 - Source lives in `app/` — `bun install && bun run dev` to run locally.
 
-## Editing content
+## Editing content — everything in the app
 
-- Family name lists, marriage muhurat time and WhatsApp API keys: **Settings drawer in the
-  live app** (persisted in the database).
-- Couple/parents names, venue, event dates/times/taglines: `app/src/lib/invite/wedding-data.ts`.
-- Page layouts: `app/src/lib/invite/renderer.ts`.
+The **Wedding details form** in the live app edits every printed word in both languages:
+couple names (and their order: Amee ♥ Ridham or Ridham ♥ Amee), parents lines, dates,
+venue + maps link, blessing/poem/closing texts, each event's name/tagline/date/time, and
+the family lists. Type English and press **⇄ Auto ગુજરાતી** to convert (server route
+`/api/translate`); the Gujarati stays manually editable. Everything persists in the
+database and applies to all future PDFs.
+
+Code defaults live in `app/src/lib/invite/wedding-data.ts`; page layouts in
+`app/src/lib/invite/renderer.ts`.

@@ -2,12 +2,19 @@ import { useEffect, useRef, useState } from "react";
 
 import type { Guest, WeddingSettings } from "../../lib/invite/types";
 import { renderPreviewPage } from "../../lib/invite/pdf";
-import { EVENTS } from "../../lib/invite/wedding-data";
+
+
+const EVENT_NAMES: Record<Guest["events"][number], string> = {
+  mandvo: "Mandvo",
+  haldi: "Haldi",
+  sanji: "Sanji",
+  marriage: "Marriage",
+};
 
 const PAGE_LABELS = (guest: Guest): string[] => [
   "Cover",
   "Invitation",
-  ...guest.events.map((e) => EVENTS[e].titleEn),
+  ...guest.events.map((e) => EVENT_NAMES[e]),
   "Family",
 ];
 

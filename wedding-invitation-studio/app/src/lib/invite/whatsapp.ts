@@ -1,29 +1,92 @@
-// WhatsApp dispatch helpers. Three tiers:
-// 1. Mobile: Web Share API shares the actual PDF straight into WhatsApp.
-// 2. Desktop: opens wa.me chat with the personalized message and downloads
-//    the PDF next to it, ready to attach.
-// 3. Optional: WhatsApp Business Cloud API (Meta) credentials in Settings turn
-//    on true automatic document sending from the couple's registered number.
+// WhatsApp dispatch. Four tiers, best available wins:
+// 1. The Studio's own Chrome extension (no API, no business account): the
+//    studio hands the PDF to the extension, which opens the guest's chat on
+//    WhatsApp Web, attaches the PDF with the personalized caption and presses
+//    send — from whatever personal number is logged into WhatsApp Web.
+// 2. Optional WhatsApp Business Cloud API when credentials are configured.
+// 3. Mobile: Web Share API shares the actual PDF straight into WhatsApp.
+// 4. Desktop fallback: opens wa.me chat with the message and downloads the
+//    PDF next to it, ready to attach.
 import type { Guest, WeddingSettings } from "./types";
 import { whatsappMessage } from "./wedding-data";
 import { buildGuestPdf, downloadBlob, pdfFileName } from "./pdf";
 
-export function waLink(guest: Guest): string {
-  const message = whatsappMessage(guest.name, guest.inviteType, guest.language);
+export function waLink(guest: Guest, settings: WeddingSettings): string {
+  const message = whatsappMessage(guest.name, guest.inviteType, guest.language, settings);
   return `https://wa.me/${guest.phone}?text=${encodeURIComponent(message)}`;
 }
 
 export interface SendOutcome {
-  method: "shared" | "walink" | "cloud-api";
+  method: "extension" | "cloud-api" | "shared" | "walink";
   detail: string;
+}
+
+/** True when the studio's WhatsApp sender extension is installed in this browser. */
+export function pingExtension(): Promise<boolean> {
+  if (typeof window === "undefined") return Promise.resolve(false);
+  return new Promise((resolve) => {
+    const timer = window.setTimeout(() => {
+      window.removeEventListener("message", onMessage);
+      resolve(false);
+    }, 450);
+    const onMessage = (e: MessageEvent) => {
+      if (e.source === window && (e.data as { type?: string })?.type === "ARWA_PONG") {
+        window.clearTimeout(timer);
+        window.removeEventListener("message", onMessage);
+        resolve(true);
+      }
+    };
+    window.addEventListener("message", onMessage);
+    window.postMessage({ type: "ARWA_PING" }, "*");
+  });
+}
+
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(",", 2)[1] ?? "");
+    reader.onerror = () => reject(new Error("Could not read the PDF"));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function sendViaExtension(guest: Guest, blob: Blob, filename: string, message: string): Promise<void> {
+  const pdfBase64 = await blobToBase64(blob);
+  const id = crypto.randomUUID();
+  await new Promise<void>((resolve, reject) => {
+    const timer = window.setTimeout(() => {
+      cleanup();
+      reject(new Error("The WhatsApp tab did not confirm within 3 minutes. Check the WhatsApp Web tab."));
+    }, 180000);
+    const onMessage = (e: MessageEvent) => {
+      const d = e.data as { type?: string; id?: string; ok?: boolean; error?: string };
+      if (e.source === window && d?.type === "ARWA_RESULT" && d.id === id) {
+        cleanup();
+        if (d.ok) resolve();
+        else reject(new Error(d.error || "The extension could not complete the send"));
+      }
+    };
+    const cleanup = () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("message", onMessage);
+    };
+    window.addEventListener("message", onMessage);
+    window.postMessage({ type: "ARWA_SEND", id, phone: guest.phone, message, filename, pdfBase64 }, "*");
+  });
 }
 
 export async function sendViaWhatsApp(guest: Guest, settings: WeddingSettings): Promise<SendOutcome> {
   const blob = await buildGuestPdf(guest, settings);
   const filename = pdfFileName(guest);
-  const message = whatsappMessage(guest.name, guest.inviteType, guest.language);
+  const message = whatsappMessage(guest.name, guest.inviteType, guest.language, settings);
 
-  // Tier 3 — Cloud API when configured: fully automatic.
+  // Tier 1 — the studio's own extension: direct automated send, no API.
+  if (await pingExtension()) {
+    await sendViaExtension(guest, blob, filename, message);
+    return { method: "extension", detail: `Sent to ${guest.name} through WhatsApp Web automatically.` };
+  }
+
+  // Tier 2 — Cloud API when configured.
   if (settings.waToken && settings.waPhoneId) {
     const form = new FormData();
     form.append("file", new File([blob], filename, { type: "application/pdf" }));
@@ -36,7 +99,7 @@ export async function sendViaWhatsApp(guest: Guest, settings: WeddingSettings): 
     return { method: "cloud-api", detail: "Delivered automatically via WhatsApp Business API" };
   }
 
-  // Tier 1 — native share sheet (Android/iOS): attaches the real PDF.
+  // Tier 3 — native share sheet (Android/iOS): attaches the real PDF.
   const file = new File([blob], filename, { type: "application/pdf" });
   const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
   if (nav.canShare?.({ files: [file] })) {
@@ -49,9 +112,9 @@ export async function sendViaWhatsApp(guest: Guest, settings: WeddingSettings): 
     }
   }
 
-  // Tier 2 — wa.me chat + local download for manual attach.
+  // Tier 4 — wa.me chat + local download for manual attach.
   downloadBlob(blob, filename);
-  window.open(waLink(guest), "_blank", "noopener");
+  window.open(waLink(guest, settings), "_blank", "noopener");
   return {
     method: "walink",
     detail: "Chat opened with the message. Attach the downloaded PDF and press send.",

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { bindings } from "../bindings.server";
 import type { Guest, WeddingSettings } from "../invite/types";
-import { DEFAULT_SETTINGS } from "../invite/wedding-data";
+import { DEFAULT_SETTINGS, normalizeSettings } from "../invite/wedding-data";
 
 const eventKey = z.enum(["mandvo", "haldi", "sanji", "marriage"]);
 
@@ -108,15 +108,56 @@ export const markSent = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+const eventContentSchema = z.object({
+  titleEn: z.string().max(60),
+  titleGu: z.string().max(60),
+  taglineEn: z.string().max(140),
+  taglineGu: z.string().max(140),
+  dateEn: z.string().max(80),
+  dateGu: z.string().max(80),
+  timeEn: z.string().max(80),
+  timeGu: z.string().max(80),
+});
+
+const nameList = z.array(z.string().max(160)).max(24);
+
 const settingsSchema = z.object({
-  marriageTimeEn: z.string().max(80),
-  marriageTimeGu: z.string().max(80),
-  awaitingEn: z.array(z.string().max(160)).max(20),
-  awaitingGu: z.array(z.string().max(160)).max(20),
-  withLoveEn: z.array(z.string().max(160)).max(20),
-  withLoveGu: z.array(z.string().max(160)).max(20),
-  bestWishesEn: z.array(z.string().max(160)).max(20),
-  bestWishesGu: z.array(z.string().max(160)).max(20),
+  brideEn: z.string().max(60),
+  brideGu: z.string().max(60),
+  groomEn: z.string().max(60),
+  groomGu: z.string().max(60),
+  brideFirst: z.boolean(),
+  brideParentsEn: z.string().max(200),
+  brideParentsGu: z.string().max(200),
+  groomParentsEn: z.string().max(200),
+  groomParentsGu: z.string().max(200),
+  datesEn: z.string().max(120),
+  datesGu: z.string().max(120),
+  cityEn: z.string().max(80),
+  cityGu: z.string().max(80),
+  venueNameEn: z.string().max(120),
+  venueNameGu: z.string().max(120),
+  venueAddressEn: z.string().max(240),
+  venueAddressGu: z.string().max(240),
+  mapsUrl: z.string().max(400),
+  blessingEn: z.string().max(600),
+  blessingGu: z.string().max(600),
+  poemEn: z.string().max(600),
+  poemGu: z.string().max(600),
+  closingEn: z.string().max(240),
+  closingGu: z.string().max(240),
+  events: z.object({
+    mandvo: eventContentSchema,
+    haldi: eventContentSchema,
+    sanji: eventContentSchema,
+    marriage: eventContentSchema,
+  }),
+  awaitingEn: nameList,
+  awaitingGu: nameList,
+  withLoveEn: nameList,
+  withLoveGu: nameList,
+  bestWishesEn: nameList,
+  bestWishesGu: nameList,
   waToken: z.string().max(600),
   waPhoneId: z.string().max(60),
 });
@@ -127,7 +168,7 @@ export const getSettings = createServerFn({ method: "GET" }).handler(async (): P
   const row = await DB.prepare("SELECT value FROM settings WHERE key = 'wedding'").first<{ value: string }>();
   if (!row) return { ok: true, settings: DEFAULT_SETTINGS };
   try {
-    return { ok: true, settings: { ...DEFAULT_SETTINGS, ...(JSON.parse(row.value) as Partial<WeddingSettings>) } };
+    return { ok: true, settings: normalizeSettings(JSON.parse(row.value)) };
   } catch {
     return { ok: true, settings: DEFAULT_SETTINGS };
   }
