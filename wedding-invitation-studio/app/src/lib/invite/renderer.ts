@@ -37,14 +37,14 @@ let fontsReady: Promise<void> | null = null;
 export function ensureFonts(): Promise<void> {
   if (fontsReady) return fontsReady;
   const faces: Array<[string, string, string, string]> = [
-    ["Cormorant Garamond", "/assets/fonts/CormorantGaramond-500.ttf", "500", "normal"],
-    ["Cormorant Garamond", "/assets/fonts/CormorantGaramond-600.ttf", "600", "normal"],
-    ["Cormorant Garamond", "/assets/fonts/CormorantGaramond-700.ttf", "700", "normal"],
-    ["Cormorant Garamond", "/assets/fonts/CormorantGaramond-500i.ttf", "500", "italic"],
-    ["Great Vibes", "/assets/fonts/GreatVibes-400.ttf", "400", "normal"],
-    ["Noto Serif Gujarati", "/assets/fonts/NotoSerifGujarati-400.ttf", "400", "normal"],
-    ["Noto Serif Gujarati", "/assets/fonts/NotoSerifGujarati-600.ttf", "600", "normal"],
-    ["Noto Serif Gujarati", "/assets/fonts/NotoSerifGujarati-700.ttf", "700", "normal"],
+    ["Cormorant Garamond", "/assets/fonts/CormorantGaramond-500.woff2", "500", "normal"],
+    ["Cormorant Garamond", "/assets/fonts/CormorantGaramond-600.woff2", "600", "normal"],
+    ["Cormorant Garamond", "/assets/fonts/CormorantGaramond-700.woff2", "700", "normal"],
+    ["Cormorant Garamond", "/assets/fonts/CormorantGaramond-500i.woff2", "500", "italic"],
+    ["Great Vibes", "/assets/fonts/GreatVibes-400.woff2", "400", "normal"],
+    ["Noto Serif Gujarati", "/assets/fonts/NotoSerifGujarati-400.woff2", "400", "normal"],
+    ["Noto Serif Gujarati", "/assets/fonts/NotoSerifGujarati-600.woff2", "600", "normal"],
+    ["Noto Serif Gujarati", "/assets/fonts/NotoSerifGujarati-700.woff2", "700", "normal"],
   ];
   fontsReady = Promise.all(
     faces.map(([family, url, weight, style]) => {
@@ -159,6 +159,14 @@ function ornamentRule(p: Painter, y: number, color = GOLD, halfSpan = 150) {
   p.ctx.restore();
 }
 
+/**
+ * On-screen previews (scale < 0.75) use the small artwork set so the page
+ * stays light; PDF renders load the full-resolution art.
+ */
+function assetFor(path: string, scale: number): string {
+  return scale < 0.75 ? path.replace("/assets/invite/", "/assets/invite/prev/") : path;
+}
+
 function drawBackground(p: Painter, img: HTMLImageElement) {
   const scale = Math.max(PAGE_W / img.width, PAGE_H / img.height);
   const w = img.width * scale;
@@ -253,7 +261,7 @@ export interface RenderedPage {
 // ---------------------------------------------------------------------------
 async function paintCover(guest: Guest, settings: WeddingSettings, scale: number): Promise<RenderedPage> {
   const lang = guest.language;
-  const [bg, monogram] = await Promise.all([loadImage(ASSETS.cover), loadImage(ASSETS.monogram)]);
+  const [bg, monogram] = await Promise.all([loadImage(assetFor(ASSETS.cover, scale)), loadImage(assetFor(ASSETS.monogram, scale))]);
   const { canvas, ctx } = makeCanvas(scale);
   const p: Painter = { ctx, lang };
 
@@ -329,7 +337,7 @@ async function paintCover(guest: Guest, settings: WeddingSettings, scale: number
 // ---------------------------------------------------------------------------
 async function paintInvitation(guest: Guest, settings: WeddingSettings, scale: number): Promise<RenderedPage> {
   const lang = guest.language;
-  const bg = await loadImage(ASSETS.interior);
+  const bg = await loadImage(assetFor(ASSETS.interior, scale));
   const { canvas, ctx } = makeCanvas(scale);
   const p: Painter = { ctx, lang };
   void ctx;
@@ -414,7 +422,7 @@ const EVENT_TITLE_Y: Record<EventKey, number> = {
 async function paintEvent(guest: Guest, key: EventKey, settings: WeddingSettings, scale: number): Promise<RenderedPage> {
   const lang = guest.language;
   const info = settings.events[key];
-  const bg = await loadImage(EVENT_BG[key]);
+  const bg = await loadImage(assetFor(EVENT_BG[key], scale));
   const { canvas, ctx } = makeCanvas(scale);
   const p: Painter = { ctx, lang };
 
@@ -472,7 +480,7 @@ async function paintEvent(guest: Guest, key: EventKey, settings: WeddingSettings
 // ---------------------------------------------------------------------------
 async function paintFamily(guest: Guest, settings: WeddingSettings, scale: number): Promise<RenderedPage> {
   const lang = guest.language;
-  const bg = await loadImage(ASSETS.family);
+  const bg = await loadImage(assetFor(ASSETS.family, scale));
   const { canvas, ctx } = makeCanvas(scale);
   const p: Painter = { ctx, lang };
   void ctx;

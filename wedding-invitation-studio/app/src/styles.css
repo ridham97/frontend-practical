@@ -120,70 +120,70 @@
 
 @font-face {
   font-family: "Cormorant Garamond";
-  src: url("/assets/fonts/CormorantGaramond-500.ttf") format("truetype");
+  src: url("/assets/fonts/CormorantGaramond-500.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Cormorant Garamond";
-  src: url("/assets/fonts/CormorantGaramond-600.ttf") format("truetype");
+  src: url("/assets/fonts/CormorantGaramond-600.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Cormorant Garamond";
-  src: url("/assets/fonts/CormorantGaramond-700.ttf") format("truetype");
+  src: url("/assets/fonts/CormorantGaramond-700.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Cormorant Garamond";
-  src: url("/assets/fonts/CormorantGaramond-500i.ttf") format("truetype");
+  src: url("/assets/fonts/CormorantGaramond-500i.woff2") format("woff2");
   font-weight: 500;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Great Vibes";
-  src: url("/assets/fonts/GreatVibes-400.ttf") format("truetype");
+  src: url("/assets/fonts/GreatVibes-400.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Figtree";
-  src: url("/assets/fonts/Figtree-400.ttf") format("truetype");
+  src: url("/assets/fonts/Figtree-400.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Figtree";
-  src: url("/assets/fonts/Figtree-500.ttf") format("truetype");
+  src: url("/assets/fonts/Figtree-500.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Figtree";
-  src: url("/assets/fonts/Figtree-600.ttf") format("truetype");
+  src: url("/assets/fonts/Figtree-600.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Noto Serif Gujarati";
-  src: url("/assets/fonts/NotoSerifGujarati-400.ttf") format("truetype");
+  src: url("/assets/fonts/NotoSerifGujarati-400.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Noto Serif Gujarati";
-  src: url("/assets/fonts/NotoSerifGujarati-600.ttf") format("truetype");
+  src: url("/assets/fonts/NotoSerifGujarati-600.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;

@@ -209,13 +209,10 @@ function Studio() {
       style={{ background: "var(--st-parchment)", color: "var(--st-ink)", fontFamily: "var(--st-sans)" }}
     >
       {/* ------------------------------------------------ hero */}
-      <div className="relative h-24 w-full overflow-hidden sm:h-32" aria-hidden>
-        <img src={ASSETS.banner} alt="" className="h-full w-full object-cover object-center" />
-        <div
-          className="absolute inset-0"
-          style={{ background: "linear-gradient(to bottom, rgba(247,241,229,0.1), var(--st-parchment))" }}
-        />
-      </div>
+      <div
+        aria-hidden
+        style={{ height: 6, background: "linear-gradient(90deg, transparent, var(--st-gold) 20%, var(--st-red) 50%, var(--st-gold) 80%, transparent)" }}
+      />
       <header className="relative overflow-hidden" id="top-proof">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-16 pt-14 lg:grid-cols-[1.15fr_0.85fr] lg:pb-24 lg:pt-20">
           <div>
@@ -375,7 +372,7 @@ function Studio() {
       {/* ------------------------------------------------ footer */}
       <footer className="border-t px-6 py-10 text-center" style={{ borderColor: "rgba(140,106,47,0.3)" }}>
         <img
-          src={ASSETS.monogram}
+          src={ASSETS.monogramSmall}
           alt="Amee and Ridham monogram"
           className="mx-auto h-16 w-16 rounded-full object-cover"
           style={{ border: "1px solid var(--st-gold-soft)" }}

@@ -196,7 +196,7 @@ export const ASSETS = {
   interior: "/assets/invite/interior.jpg",
   family: "/assets/invite/family.jpg",
   monogram: "/assets/invite/monogram.png",
-  banner: "/assets/invite/banner.jpg",
+  monogramSmall: "/assets/invite/prev/monogram.png",
 };
 
 /** WhatsApp message that travels with the PDF. */
