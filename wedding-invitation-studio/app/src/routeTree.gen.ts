@@ -13,6 +13,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiTranslateRouteImport } from './routes/api/translate'
+import { Route as ApiExtensionRouteImport } from './routes/api/extension'
 import { Route as ApiWaSendRouteImport } from './routes/api/wa/send'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -35,6 +36,11 @@ const ApiTranslateRoute = ApiTranslateRouteImport.update({
   path: '/api/translate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiExtensionRoute = ApiExtensionRouteImport.update({
+  id: '/api/extension',
+  path: '/api/extension',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiWaSendRoute = ApiWaSendRouteImport.update({
   id: '/api/wa/send',
   path: '/api/wa/send',
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/extension': typeof ApiExtensionRoute
   '/api/translate': typeof ApiTranslateRoute
   '/api/wa/send': typeof ApiWaSendRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/extension': typeof ApiExtensionRoute
   '/api/translate': typeof ApiTranslateRoute
   '/api/wa/send': typeof ApiWaSendRoute
 }
@@ -60,20 +68,33 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/extension': typeof ApiExtensionRoute
   '/api/translate': typeof ApiTranslateRoute
   '/api/wa/send': typeof ApiWaSendRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/robots.txt' | '/sitemap.xml' | '/api/translate' | '/api/wa/send'
+    | '/'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/api/extension'
+    | '/api/translate'
+    | '/api/wa/send'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/robots.txt' | '/sitemap.xml' | '/api/translate' | '/api/wa/send'
+  to:
+    | '/'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/api/extension'
+    | '/api/translate'
+    | '/api/wa/send'
   id:
     | '__root__'
     | '/'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/api/extension'
     | '/api/translate'
     | '/api/wa/send'
   fileRoutesById: FileRoutesById
@@ -82,6 +103,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiExtensionRoute: typeof ApiExtensionRoute
   ApiTranslateRoute: typeof ApiTranslateRoute
   ApiWaSendRoute: typeof ApiWaSendRoute
 }
@@ -116,6 +138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTranslateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/extension': {
+      id: '/api/extension'
+      path: '/api/extension'
+      fullPath: '/api/extension'
+      preLoaderRoute: typeof ApiExtensionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/wa/send': {
       id: '/api/wa/send'
       path: '/api/wa/send'
@@ -130,6 +159,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiExtensionRoute: ApiExtensionRoute,
   ApiTranslateRoute: ApiTranslateRoute,
   ApiWaSendRoute: ApiWaSendRoute,
 }

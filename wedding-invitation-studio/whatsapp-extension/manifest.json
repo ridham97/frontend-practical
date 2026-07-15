@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Amee ♥ Ridham WhatsApp Sender",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Lets the Invitation Studio send personalized wedding invitation PDFs straight through your own WhatsApp Web, no API needed.",
   "permissions": ["tabs"],
   "host_permissions": ["https://web.whatsapp.com/*"],

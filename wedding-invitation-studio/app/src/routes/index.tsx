@@ -214,7 +214,7 @@ function Studio() {
         style={{ height: 6, background: "linear-gradient(90deg, transparent, var(--st-gold) 20%, var(--st-red) 50%, var(--st-gold) 80%, transparent)" }}
       />
       <header className="relative overflow-hidden" id="top-proof">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-16 pt-14 lg:grid-cols-[1.15fr_0.85fr] lg:pb-24 lg:pt-20">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-8 pb-16 pt-14 lg:grid-cols-[1.15fr_0.85fr] lg:pb-24 lg:pt-20">
           <div>
             <p className="st-eyebrow">The stationer's desk of</p>
             <h1
@@ -280,7 +280,7 @@ function Studio() {
       </header>
 
       {/* ------------------------------------------------ studio */}
-      <section id="studio" className="mx-auto max-w-6xl space-y-10 px-6 pb-16">
+      <section id="studio" className="mx-auto max-w-7xl space-y-10 px-8 pb-16">
         <div className="st-rule st-eyebrow">The studio</div>
 
         <UploadDrawer onParsed={handleParsed} guestCount={guests.length} />
@@ -319,7 +319,7 @@ function Studio() {
             </p>
             <ol className="mt-3 list-inside list-decimal space-y-1 text-sm" style={{ color: "var(--st-ink-soft)" }}>
               <li>
-                <a href="/downloads/amee-ridham-whatsapp-sender.zip" className="font-semibold underline" style={{ color: "var(--st-wa)" }} download>
+                <a href="/api/extension" className="font-semibold underline" style={{ color: "var(--st-wa)" }} download>
                   Download the extension (zip)
                 </a>{" "}
                 and unzip it anywhere.
