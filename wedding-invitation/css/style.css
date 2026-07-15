@@ -716,6 +716,40 @@ main { position: relative; z-index: 2; }
   pointer-events: none;
 }
 
+/* themed flower sprays draped over the card border, swaying in the wind */
+
+.event__flora {
+  position: absolute;
+  width: 50%;
+  pointer-events: none;
+  z-index: 3;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+
+.event__flora--tl {
+  top: -4%;
+  left: -11%;
+  transform-origin: 28% 22%;
+  animation: flora-sway 5.5s ease-in-out infinite alternate;
+}
+
+.event__flora--br {
+  bottom: -3%;
+  right: -11%;
+  transform-origin: 72% 78%;
+  animation: flora-sway-br 6.5s ease-in-out infinite alternate;
+}
+
+@keyframes flora-sway {
+  from { transform: rotate(-2deg) scale(1); }
+  to   { transform: rotate(2.4deg) scale(1.02); }
+}
+
+@keyframes flora-sway-br {
+  from { transform: scale(-1) rotate(-2.4deg); }
+  to   { transform: scale(-1.02) rotate(2deg); }
+}
+
 /* details — everything centred */
 
 .event__details {
@@ -890,6 +924,45 @@ main { position: relative; z-index: 2; }
   text-transform: uppercase;
   color: var(--ink-soft);
 }
+
+/* ─────────────── Socials ─────────────── */
+
+.socials { margin-top: 2.6svh; }
+
+.socials__label {
+  font-family: var(--font-caps);
+  font-size: 0.66rem;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+.socials__row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.socials__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-caps);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  color: #f0d493;
+  padding: 9px 18px;
+  border: 1px solid rgba(212, 169, 89, 0.45);
+  border-radius: 999px;
+  background: rgba(240, 212, 147, 0.06);
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.socials__link:active { transform: scale(0.95); background: rgba(240, 212, 147, 0.14); }
 
 /* ─────────────── Music toggle ─────────────── */
 
