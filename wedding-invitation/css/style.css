@@ -428,45 +428,17 @@ main { position: relative; z-index: 2; }
 
 .hero__scroll {
   position: absolute;
-  bottom: max(22px, env(safe-area-inset-bottom));
+  bottom: max(26px, env(safe-area-inset-bottom));
   left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  margin-left: -13px;
+  color: rgba(240, 212, 147, 0.85);
+  animation: scroll-bob 2s ease-in-out infinite;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
 }
 
-.hero__scroll-text {
-  font-family: var(--font-caps);
-  font-size: 0.62rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-.hero__scroll-line {
-  width: 1px;
-  height: 44px;
-  background: var(--gold);
-  overflow: hidden;
-  position: relative;
-}
-
-.hero__scroll-line::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: -100%;
-  width: 100%;
-  height: 100%;
-  background: var(--ink);
-  animation: scroll-drip 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-}
-
-@keyframes scroll-drip {
-  0% { top: -100%; }
-  60%, 100% { top: 100%; }
+@keyframes scroll-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(7px); }
 }
 
 /* ─────────────── Blessings (intro + family, one page) ─────────────── */
@@ -744,50 +716,47 @@ main { position: relative; z-index: 2; }
   pointer-events: none;
 }
 
-/* details — shared left edge so rows never misalign */
+/* details — everything centred */
 
 .event__details {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 
 .detail {
-  display: grid;
-  grid-template-columns: 26px 1fr;
-  align-items: start;
-  gap: 0 10px;
-  width: min(300px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   margin-bottom: 10px;
-  text-align: left;
 }
 
 .detail__icon {
   color: var(--accent, var(--gold));
-  font-size: 1rem;
-  line-height: 1.5;
-  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1;
+  margin-bottom: 6px;
 }
 
-.detail div { display: flex; flex-direction: column; min-width: 0; }
+.detail div { display: flex; flex-direction: column; align-items: center; }
 
 .detail b {
   font-family: var(--font-caps);
   font-weight: 400;
-  font-size: 0.95rem;
+  font-size: 1rem;
   letter-spacing: 0.06em;
   line-height: 1.5;
 }
 
 .detail i {
   font-style: normal;
-  font-size: 0.95rem;
-  color: var(--ink-soft);
+  font-family: var(--font-caps);
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+  color: #f0d493;
   margin-top: 3px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
 }
 
 .event__desc {
@@ -797,6 +766,7 @@ main { position: relative; z-index: 2; }
   color: var(--ink-soft);
   max-width: 320px;
   margin: 4px auto 0;
+  text-align: center;
 }
 
 /* per-event accent */

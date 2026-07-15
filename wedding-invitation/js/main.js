@@ -282,32 +282,33 @@
       .to(details, { opacity: 1, y: 0, stagger: 0.1, duration: 0.6, ease: "power3.out" }, "-=1.0");
 
     let pending = null;
+    let played = false; // splash + content animate ONCE per page load
     const killPending = () => { if (pending) pending.kill(); pending = null; };
 
     ScrollTrigger.create({
       trigger: section,
       start: "top 50%",
       end: "bottom 50%",
-      // scrolling DOWN into the event: splash first, then the content loads
+      // first downward visit: splash first, then the content loads;
+      // every later visit (any direction) shows the event instantly
       onEnter: () => {
         killPending();
+        if (played) {
+          etl.progress(1).pause();
+          return;
+        }
+        played = true;
         spawnBurst(key);
         pending = gsap.delayedCall(0.55, () => etl.restart());
       },
-      // scrolling back UP: no replay — show the event instantly
       onEnterBack: () => {
         killPending();
         etl.progress(1).pause();
       },
-      // passed below: make sure content is fully shown (in case of a fast flick)
+      // passed below mid-animation: make sure content is fully shown
       onLeave: () => {
         killPending();
-        etl.progress(1).pause();
-      },
-      // scrolled back above it: rewind so the next downward visit replays
-      onLeaveBack: () => {
-        killPending();
-        etl.pause(0);
+        if (played) etl.progress(1).pause();
       },
     });
 
