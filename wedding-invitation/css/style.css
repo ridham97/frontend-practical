@@ -716,38 +716,37 @@ main { position: relative; z-index: 2; }
   pointer-events: none;
 }
 
-/* themed flower sprays draped over the card border, swaying in the wind */
+/* per-event decoration hung from the card's top border, swaying like wind */
 
 .event__flora {
   position: absolute;
-  width: 50%;
   pointer-events: none;
   z-index: 3;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.38));
+  transform-origin: 50% 0; /* pendulum from where it hangs */
 }
 
-.event__flora--tl {
-  top: -4%;
-  left: -11%;
-  transform-origin: 28% 22%;
-  animation: flora-sway 5.5s ease-in-out infinite alternate;
+.event__flora--top {
+  top: -3.5%;
+  left: 50%;
+  width: 106%;
+  margin-left: -53%;
 }
 
-.event__flora--br {
-  bottom: -3%;
-  right: -11%;
-  transform-origin: 72% 78%;
-  animation: flora-sway-br 6.5s ease-in-out infinite alternate;
+/* each event sways with its own rhythm so nothing feels copied */
+.event__flora--mandvo  { animation: flora-pend 5.2s ease-in-out infinite alternate; }
+.event__flora--haldi   { animation: flora-pend 6.4s ease-in-out infinite alternate; top: -2.5%; }
+.event__flora--sangeet { animation: flora-pend-soft 7s ease-in-out infinite alternate; top: -2.5%; }
+.event__flora--lagan   { animation: flora-pend 5.8s ease-in-out infinite alternate; width: 102%; margin-left: -51%; top: -2%; }
+
+@keyframes flora-pend {
+  from { transform: rotate(-1.6deg); }
+  to   { transform: rotate(1.6deg); }
 }
 
-@keyframes flora-sway {
-  from { transform: rotate(-2deg) scale(1); }
-  to   { transform: rotate(2.4deg) scale(1.02); }
-}
-
-@keyframes flora-sway-br {
-  from { transform: scale(-1) rotate(-2.4deg); }
-  to   { transform: scale(-1.02) rotate(2deg); }
+@keyframes flora-pend-soft {
+  from { transform: rotate(-1deg) translateY(0); }
+  to   { transform: rotate(1deg) translateY(4px); }
 }
 
 /* details — everything centred */
