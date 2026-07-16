@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
           "Personalized bilingual wedding invitation PDFs for Amee & Ridham, 28-29 January 2027, OTB Rajkot, generated per guest and dispatched on WhatsApp.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://amee-ridham-invites.higgsfield.app/" }],
+    links: [{ rel: "canonical", href: "https://amee-ridham-studio.higgsfield.app/" }],
   }),
   component: Studio,
 });

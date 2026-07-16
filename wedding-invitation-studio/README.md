@@ -1,6 +1,6 @@
 # Amee ♥ Ridham — Wedding Invitation Studio
 
-**Live app: https://amee-ridham-invites.higgsfield.app**
+**Live app: https://amee-ridham-studio.higgsfield.app** (backup of https://amee-ridham-invites.higgsfield.app)
 
 A personal admin panel that turns one Excel guest sheet into a personalized wedding
 invitation PDF for every guest — in **English or Gujarati** — and dispatches each one on
