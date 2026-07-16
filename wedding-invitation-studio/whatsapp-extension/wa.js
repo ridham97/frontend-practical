@@ -1,8 +1,8 @@
 // Runs on WhatsApp Web. If the background has a pending job for this tab, it
-// waits for the chat to open, attaches the PDF through WhatsApp's own file
-// input (the same one the + attach button uses), fills the caption and sends.
-// Success is only reported after the PDF bubble is actually visible in the
-// conversation, so a text-only send can never be mistaken for success.
+// waits for the chat to open, attaches the PDF (three mechanisms, in order:
+// the attach menu's file slot, drag-and-drop onto the chat, paste), fills the
+// caption and sends. Success is only reported after the PDF bubble is
+// actually visible in the conversation.
 (async () => {
   const job = await new Promise((resolve) =>
     chrome.runtime.sendMessage({ type: "arwa_get_job" }, (res) => {
@@ -31,14 +31,11 @@
 
   const visible = (el) => !!el && el.offsetParent !== null;
 
-  // Editable boxes OUTSIDE the footer = the attachment preview's caption box.
-  // (The footer composer re-renders constantly, so never compare node identity.)
   const captionBox = () =>
     [...document.querySelectorAll('div[contenteditable="true"]')].find(
-      (el) => visible(el) && !el.closest("footer") && !el.closest('[data-testid="chat-list-search"]')
+      (el) => visible(el) && !el.closest("footer")
     ) || null;
 
-  // Send control that belongs to the attachment preview (not the footer).
   const previewSendButton = () => {
     const selectors = [
       'span[data-icon="send"]',
@@ -58,23 +55,105 @@
     return null;
   };
 
-  const pressEnter = (target) => {
-    const opts = { key: "Enter", code: "Enter", keyCode: 13, which: 13, bubbles: true, cancelable: true };
+  const previewOpen = () => !!(previewSendButton() || captionBox());
+
+  const pressKey = (target, key, keyCode) => {
+    const opts = { key, code: key, keyCode, which: keyCode, bubbles: true, cancelable: true };
     target.dispatchEvent(new KeyboardEvent("keydown", opts));
     target.dispatchEvent(new KeyboardEvent("keypress", opts));
     target.dispatchEvent(new KeyboardEvent("keyup", opts));
   };
 
-  // The PDF bubble shows the file name; look for its first characters in the
-  // chat once the preview closes. Works even when the name is truncated.
   const nameStamp = (job.filename || "invitation.pdf").replace(/\.pdf$/i, "").slice(0, 18);
   const pdfBubbleVisible = () => document.body.innerText.includes(nameStamp);
+
+  // Compact fingerprint of the current WhatsApp markup, for precise debugging.
+  const fingerprint = () => {
+    const icons = [...new Set([...document.querySelectorAll("[data-icon]")].filter(visible).map((el) => el.getAttribute("data-icon")))].slice(0, 18);
+    const inputs = [...document.querySelectorAll('input[type="file"]')].map((i) => i.accept || "(any)");
+    return `icons: ${icons.join(",") || "none"} | file-inputs: ${inputs.length ? inputs.join(" / ") : "none"}`;
+  };
 
   const banner = document.createElement("div");
   banner.textContent = "Amee ♥ Ridham studio: sending invitation to " + job.phone + "…";
   banner.style.cssText =
     "position:fixed;top:0;left:0;right:0;z-index:99999;background:#233D35;color:#F7F1E5;padding:8px 14px;font:13px sans-serif;text-align:center";
   document.documentElement.appendChild(banner);
+
+  const file = (() => {
+    const bytes = Uint8Array.from(atob(job.pdfBase64), (c) => c.charCodeAt(0));
+    return new File([bytes], job.filename || "invitation.pdf", { type: "application/pdf" });
+  })();
+
+  const makeDT = () => {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    return dt;
+  };
+
+  // --- attach mechanism 1: the attach menu's hidden file slot -------------
+  const attachViaMenu = async () => {
+    const plusSelectors = [
+      'span[data-icon="plus"]',
+      'span[data-icon="plus-rounded"]',
+      'span[data-icon="attach-menu-plus"]',
+      'span[data-icon="clip"]',
+      'span[data-icon="wds-ic-plus"]',
+      'button[aria-label="Attach"]',
+      '[data-testid="attach-menu-plus"]',
+    ];
+    for (const sel of plusSelectors) {
+      const icon = document.querySelector(sel);
+      const btn = icon && (icon.closest('[role="button"], button') || icon);
+      if (btn && visible(btn) && btn.closest("footer")) {
+        btn.click();
+        break;
+      }
+    }
+    // wait for the menu's file inputs to exist
+    const input = await waitFor(() => {
+      const inputs = [...document.querySelectorAll('input[type="file"]')];
+      return (
+        inputs.find((i) => (i.accept || "").trim() === "*" || (i.accept || "").trim() === "") ||
+        inputs.find((i) => (i.accept || "").includes("application") || (i.accept || "").includes("pdf")) ||
+        inputs.find((i) => !/image|video/.test(i.accept || "")) ||
+        null
+      );
+    }, 5000, 300);
+    if (!input) {
+      document.body && pressKey(document.body, "Escape", 27); // close the menu again
+      return false;
+    }
+    input.files = makeDT().files;
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    return true;
+  };
+
+  // --- attach mechanism 2: drag-and-drop the PDF onto the conversation ----
+  const attachViaDrop = async () => {
+    const target =
+      document.querySelector("#main") ||
+      document.querySelector('footer div[contenteditable="true"]')?.closest("#main, main, div") ||
+      document.body;
+    for (const type of ["dragenter", "dragover", "drop"]) {
+      const ev = new DragEvent(type, { bubbles: true, cancelable: true });
+      Object.defineProperty(ev, "dataTransfer", { value: makeDT() });
+      target.dispatchEvent(ev);
+      await sleep(250);
+    }
+    return true;
+  };
+
+  // --- attach mechanism 3: paste into the composer -------------------------
+  const attachViaPaste = async () => {
+    const composer = document.querySelector('footer div[contenteditable="true"]');
+    if (!composer) return false;
+    composer.focus();
+    const paste = new ClipboardEvent("paste", { bubbles: true, cancelable: true });
+    Object.defineProperty(paste, "clipboardData", { value: makeDT() });
+    composer.dispatchEvent(paste);
+    return true;
+  };
 
   try {
     // 1. Wait for the conversation composer (chat open + logged in).
@@ -86,68 +165,31 @@
     if (!composerReady) throw new Error("WhatsApp chat did not open. Make sure WhatsApp Web is logged in.");
     await sleep(1800);
 
-    const bytes = Uint8Array.from(atob(job.pdfBase64), (c) => c.charCodeAt(0));
-    const file = new File([bytes], job.filename || "invitation.pdf", { type: "application/pdf" });
-
-    // 2. Attach through WhatsApp's own file input. Open the + attach menu
-    //    first so the inputs exist, then pick the document input (accepts *).
-    const plusSelectors = [
-      'span[data-icon="plus"]',
-      'span[data-icon="attach-menu-plus"]',
-      'span[data-icon="clip"]',
-      'span[data-icon="wds-ic-plus"]',
-      'button[aria-label="Attach"]',
-      '[data-testid="attach-menu-plus"]',
+    // 2. Try each attach mechanism until the preview opens.
+    const methods = [
+      ["attach menu", attachViaMenu],
+      ["drag and drop", attachViaDrop],
+      ["paste", attachViaPaste],
     ];
-    let attached = false;
-    for (let attempt = 0; attempt < 2 && !attached; attempt++) {
-      for (const sel of plusSelectors) {
-        const icon = document.querySelector(sel);
-        const btn = icon && (icon.closest('[role="button"], button') || icon);
-        if (btn && visible(btn)) {
-          btn.click();
-          await sleep(900);
-          break;
-        }
+    let opened = false;
+    let used = "";
+    for (const [name, method] of methods) {
+      banner.textContent = `Amee ♥ Ridham studio: attaching PDF (${name})…`;
+      const did = await method();
+      if (did && (await waitFor(() => (previewOpen() ? true : null), 8000, 400))) {
+        opened = true;
+        used = name;
+        break;
       }
-      const inputs = [...document.querySelectorAll('input[type="file"]')];
-      const docInput =
-        inputs.find((i) => (i.accept || "").trim() === "*" || (i.accept || "").trim() === "") ||
-        inputs.find((i) => (i.accept || "").includes("application")) ||
-        inputs.find((i) => !/image|video/.test(i.accept || "")) ||
-        inputs[0];
-      if (docInput) {
-        const dt = new DataTransfer();
-        dt.items.add(file);
-        docInput.files = dt.files;
-        docInput.dispatchEvent(new Event("change", { bubbles: true }));
-        attached = true;
-      } else {
-        await sleep(800);
-      }
+      pressKey(document.body, "Escape", 27);
+      await sleep(600);
     }
-
-    // 2b. Fallback: synthetic paste into the composer.
-    if (!attached) {
-      const composer = document.querySelector('footer div[contenteditable="true"]');
-      const dt = new DataTransfer();
-      dt.items.add(file);
-      composer.focus();
-      const paste = new ClipboardEvent("paste", { bubbles: true, cancelable: true });
-      Object.defineProperty(paste, "clipboardData", { value: dt });
-      composer.dispatchEvent(paste);
-    }
-
-    // 3. Wait for the attachment preview: a caption box or send control
-    //    OUTSIDE the footer. If neither appears, the attach failed - stop
-    //    here so nothing text-only gets sent by mistake.
-    const preview = await waitFor(() => previewSendButton() || captionBox(), 30000);
-    if (!preview) {
-      throw new Error("Could not attach the PDF (the preview never opened). Nothing was sent. Please try once more.");
+    if (!opened) {
+      throw new Error("Could not attach the PDF with any method. Nothing was sent. [" + fingerprint() + "]");
     }
     await sleep(900);
 
-    // 4. Type the personalized message into the caption box (never the footer).
+    // 3. Type the personalized message into the caption box (never the footer).
     const caption = captionBox();
     if (caption && job.message) {
       caption.focus();
@@ -155,21 +197,24 @@
       await sleep(500);
     }
 
-    // 5. Send: click the preview's send button, else press Enter in the caption.
+    // 4. Send: click the preview's send button, else press Enter in the caption.
+    banner.textContent = "Amee ♥ Ridham studio: sending (attached via " + used + ")…";
     const btn = previewSendButton();
     if (btn) btn.click();
-    else pressEnter(caption || document.activeElement);
+    else pressKey(caption || document.activeElement, "Enter", 13);
     await sleep(2500);
     if (previewSendButton()) {
-      pressEnter(captionBox() || document.activeElement);
+      pressKey(captionBox() || document.activeElement, "Enter", 13);
       await sleep(2000);
     }
+    if (previewSendButton()) {
+      throw new Error("The attachment preview did not close after pressing send. [" + fingerprint() + "]");
+    }
 
-    // 6. Hard verification: the PDF bubble (file name) must be visible in the
-    //    conversation. Without this, never report success.
-    const delivered = await waitFor(() => (pdfBubbleVisible() && !previewSendButton() ? true : null), 20000, 800);
+    // 5. Hard verification: the PDF bubble must be visible in the chat.
+    const delivered = await waitFor(() => (pdfBubbleVisible() ? true : null), 20000, 800);
     if (!delivered) {
-      throw new Error("WhatsApp did not show the sent PDF in the chat. Please check the tab and send it manually if needed.");
+      throw new Error("WhatsApp did not show the sent PDF in the chat. Check the tab. [" + fingerprint() + "]");
     }
 
     banner.textContent = "Invitation PDF sent ✓ — this tab will close by itself.";

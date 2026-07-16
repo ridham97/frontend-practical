@@ -21,7 +21,7 @@ export interface SendOutcome {
   detail: string;
 }
 
-export const LATEST_EXTENSION_VERSION = "1.2.1";
+export const LATEST_EXTENSION_VERSION = "1.3.0";
 
 /**
  * Version of the studio's WhatsApp sender extension active on this page, or
