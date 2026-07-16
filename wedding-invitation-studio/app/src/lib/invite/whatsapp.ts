@@ -21,19 +21,25 @@ export interface SendOutcome {
   detail: string;
 }
 
-/** True when the studio's WhatsApp sender extension is installed in this browser. */
-export function pingExtension(): Promise<boolean> {
-  if (typeof window === "undefined") return Promise.resolve(false);
+export const LATEST_EXTENSION_VERSION = "1.2.1";
+
+/**
+ * Version of the studio's WhatsApp sender extension active on this page, or
+ * null when the extension is not installed / not running on this domain.
+ */
+export function pingExtension(): Promise<string | null> {
+  if (typeof window === "undefined") return Promise.resolve(null);
   return new Promise((resolve) => {
     const timer = window.setTimeout(() => {
       window.removeEventListener("message", onMessage);
-      resolve(false);
+      resolve(null);
     }, 450);
     const onMessage = (e: MessageEvent) => {
-      if (e.source === window && (e.data as { type?: string })?.type === "ARWA_PONG") {
+      const d = e.data as { type?: string; version?: string };
+      if (e.source === window && d?.type === "ARWA_PONG") {
         window.clearTimeout(timer);
         window.removeEventListener("message", onMessage);
-        resolve(true);
+        resolve(d.version || "1.0.0");
       }
     };
     window.addEventListener("message", onMessage);
@@ -117,6 +123,7 @@ export async function sendViaWhatsApp(guest: Guest, settings: WeddingSettings): 
   window.open(waLink(guest, settings), "_blank", "noopener");
   return {
     method: "walink",
-    detail: "Chat opened with the message. Attach the downloaded PDF and press send.",
+    detail:
+      "NOT automatic: the extension is not active on this page, so the chat was opened with the message and the PDF was downloaded. Attach it manually, or install/reload the extension and refresh this page.",
   };
 }

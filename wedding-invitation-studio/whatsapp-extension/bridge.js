@@ -1,5 +1,6 @@
 // Runs on the Invitation Studio page. Relays send requests from the page to
 // the extension background, and results back to the page.
+const VERSION = chrome.runtime.getManifest().version;
 let port = null;
 
 function getPort() {
@@ -20,7 +21,7 @@ function getPort() {
 window.addEventListener("message", (e) => {
   if (e.source !== window || !e.data) return;
   if (e.data.type === "ARWA_PING") {
-    window.postMessage({ type: "ARWA_PONG" }, "*");
+    window.postMessage({ type: "ARWA_PONG", version: VERSION }, "*");
   }
   if (e.data.type === "ARWA_SEND") {
     const { id, phone, message, filename, pdfBase64 } = e.data;
@@ -32,4 +33,4 @@ window.addEventListener("message", (e) => {
   }
 });
 
-window.postMessage({ type: "ARWA_PONG" }, "*");
+window.postMessage({ type: "ARWA_PONG", version: VERSION }, "*");

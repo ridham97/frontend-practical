@@ -16,7 +16,7 @@ import {
 } from "../lib/api/invites.functions";
 import type { Guest, ParseResult, WeddingSettings } from "../lib/invite/types";
 import { buildAllPdfsZip, buildGuestPdf, downloadBlob, pdfFileName } from "../lib/invite/pdf";
-import { pingExtension, sendViaWhatsApp } from "../lib/invite/whatsapp";
+import { LATEST_EXTENSION_VERSION, pingExtension, sendViaWhatsApp } from "../lib/invite/whatsapp";
 import { ASSETS, DEFAULT_SETTINGS } from "../lib/invite/wedding-data";
 
 export const Route = createFileRoute("/")({
@@ -57,7 +57,7 @@ function Studio() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
   const [previewLang, setPreviewLang] = useState<"english" | "gujarati">("english");
-  const [extensionReady, setExtensionReady] = useState(false);
+  const [extensionVersion, setExtensionVersion] = useState<string | null>(null);
 
   const note = useCallback((message: string, tone: "ok" | "warn" | "err" = "ok") => {
     setToast({ message, tone });
@@ -65,7 +65,10 @@ function Studio() {
   }, []);
 
   useEffect(() => {
-    void pingExtension().then(setExtensionReady);
+    void pingExtension().then(setExtensionVersion);
+    const pinger = window.setInterval(() => {
+      void pingExtension().then(setExtensionVersion);
+    }, 5000);
     void listGuests()
       .then((res) => {
         if (res.ok && res.guests.length) setGuests(res.guests);
@@ -76,6 +79,7 @@ function Studio() {
         if (res.ok) setSettings(res.settings);
       })
       .catch(() => undefined);
+    return () => window.clearInterval(pinger);
   }, []);
 
   const selected = useMemo(() => {
@@ -327,13 +331,24 @@ function Studio() {
               <li>Open <strong>chrome://extensions</strong>, switch on Developer mode (top right).</li>
               <li>Click <strong>Load unpacked</strong> and pick the unzipped folder.</li>
               <li>Open <a href="https://web.whatsapp.com" target="_blank" rel="noreferrer" className="underline">web.whatsapp.com</a> once and log in with your phone.</li>
-              <li>Refresh this page. The WhatsApp buttons now send automatically. {extensionReady ? "✓ Extension detected!" : ""}</li>
+              <li>Refresh this page. The WhatsApp buttons now send automatically.</li>
             </ol>
-            {extensionReady && (
-              <p className="mt-2 text-sm font-semibold" style={{ color: "var(--st-wa)" }}>
-                ✓ Extension detected — sends will go out automatically through your WhatsApp Web.
-              </p>
-            )}
+            <p
+              className="mt-3 inline-block px-3 py-1.5 text-sm font-semibold"
+              style={
+                extensionVersion === LATEST_EXTENSION_VERSION
+                  ? { background: "rgba(31,122,83,0.12)", color: "var(--st-wa)", border: "1px solid rgba(31,122,83,0.5)" }
+                  : extensionVersion
+                    ? { background: "rgba(164,74,63,0.08)", color: "var(--st-red)", border: "1px solid rgba(164,74,63,0.5)" }
+                    : { background: "rgba(140,106,47,0.08)", color: "var(--st-gold)", border: "1px solid rgba(140,106,47,0.5)" }
+              }
+            >
+              {extensionVersion === LATEST_EXTENSION_VERSION
+                ? `✓ Extension v${extensionVersion} active on this page: WhatsApp sends are fully automatic.`
+                : extensionVersion
+                  ? `⚠ Old extension v${extensionVersion} detected. Download v${LATEST_EXTENSION_VERSION} above, replace the folder, press reload ↻ in chrome://extensions, then refresh this page.`
+                  : `⚠ Extension not active on this page: sends will open the chat and download the PDF for manual attach. Install it (steps above), then refresh this page.`}
+            </p>
           </div>
           <div className="mt-4 grid gap-6 text-sm leading-relaxed md:grid-cols-3" style={{ color: "var(--st-ink-soft)" }}>
             <div>
