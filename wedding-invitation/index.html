@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a0f0a" />
+  <meta name="description" content="Amee & Ridham — Wedding Invitation · 28 & 29 January 2027 · Rajkot, Gujarat" />
+  <title>Amee ♥ Ridham — Wedding Invitation</title>
+
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════ LOADER ═══════════════ -->
+  <div class="loader" id="loader">
+    <div class="loader__ring">
+      <svg viewBox="0 0 120 120">
+        <circle class="loader__circle" cx="60" cy="60" r="54" />
+      </svg>
+      <div class="loader__monogram">
+        <span>A</span><em>♥</em><span>R</span>
+      </div>
+    </div>
+    <p class="loader__text">શ્રી ગણેશાય નમઃ</p>
+  </div>
+
+  <!-- ═══════════════ FIXED BACKDROP (gradient crossfades while scrolling) ═══════════════ -->
+  <div class="backdrop" id="backdrop">
+    <div class="backdrop__layer is-on" data-key="hero"></div>
+    <div class="backdrop__layer" data-key="mandvo"></div>
+    <div class="backdrop__layer" data-key="haldi"></div>
+    <div class="backdrop__layer" data-key="sangeet"></div>
+    <div class="backdrop__layer" data-key="lagan"></div>
+    <div class="backdrop__layer" data-key="venue"></div>
+  </div>
+
+  <!-- ═══════════════ PARTICLES CANVAS (theme changes per event) ═══════════════ -->
+  <canvas id="particles" class="particles" aria-hidden="true"></canvas>
+
+  <!-- ═══════════════ PROGRESS DOTS ═══════════════ -->
+  <nav class="dots" id="dots" aria-label="Sections">
+    <a href="#hero"      class="dots__dot" data-label="Home"></a>
+    <a href="#blessings" class="dots__dot" data-label="Family"></a>
+    <a href="#mandvo"    class="dots__dot" data-label="Mandvo"></a>
+    <a href="#haldi"     class="dots__dot" data-label="Haldi"></a>
+    <a href="#sangeet"   class="dots__dot" data-label="Sanji"></a>
+    <a href="#lagan"     class="dots__dot" data-label="Lagan"></a>
+    <a href="#venue"     class="dots__dot" data-label="Venue"></a>
+  </nav>
+
+  <!-- ═══════════════ MUSIC ═══════════════ -->
+  <audio id="melody" src="audio/melody.mp3" loop preload="auto"></audio>
+  <button class="music-btn" id="music-btn" aria-label="Pause music" aria-pressed="true">
+    <svg class="music-btn__on" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 18V5l11-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="17" cy="16" r="3" />
+    </svg>
+    <svg class="music-btn__off" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 18V5l11-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="17" cy="16" r="3" /><line x1="2" y1="2" x2="22" y2="22" />
+    </svg>
+  </button>
+
+  <main id="smooth-content">
+
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <section class="hero panel" id="hero">
+      <div class="hero__bg parallax-bg">
+        <video
+          class="hero__media"
+          poster="img/hero.jpg"
+          muted
+          loop
+          playsinline
+          autoplay
+          preload="auto"
+          aria-hidden="true"
+        >
+          <source src="video/hero.mp4" type="video/mp4" />
+        </video>
+        <div class="hero__veil"></div>
+      </div>
+
+      <div class="hero__content">
+        <p class="hero__ganesh anim">॥ શ્રી ગણેશાય નમઃ ॥</p>
+
+        <div class="hero__pre-wrap anim">
+          <p class="hero__pre">The Wedding Of</p>
+        </div>
+
+        <h1 class="hero__names">
+          <span class="hero__name hero__name--amee">Amee</span>
+          <span class="hero__amp"><i>&amp;</i></span>
+          <span class="hero__name hero__name--ridham">Ridham</span>
+        </h1>
+
+        <p class="hero__invite anim">
+          Together with their families,<br />
+          joyfully invite you to their wedding celebrations
+        </p>
+
+        <div class="hero__date-badge anim">
+          <span class="hero__date-dia">◆</span>
+          <p class="hero__date-main">28 <em>&amp;</em> 29 January 2027</p>
+          <span class="hero__date-dia">◆</span>
+        </div>
+
+        <p class="hero__place anim">OTB · Rajkot · Gujarat</p>
+
+        <div class="hero__cd-wrap anim">
+          <p class="hero__cd-label">— wedding countdown —</p>
+          <div class="hero__countdown" id="countdown">
+            <div class="cd"><b id="cd-d">00</b><i>Days</i></div>
+            <span class="cd-sep">:</span>
+            <div class="cd"><b id="cd-h">00</b><i>Hours</i></div>
+            <span class="cd-sep">:</span>
+            <div class="cd"><b id="cd-m">00</b><i>Mins</i></div>
+            <span class="cd-sep">:</span>
+            <div class="cd"><b id="cd-s">00</b><i>Secs</i></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__scroll anim" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 9l7 7 7-7" />
+        </svg>
+      </div>
+    </section>
+
+    <!-- ═══════════════ BLESSINGS (intro + family) ═══════════════ -->
+    <section class="blessings panel" id="blessings">
+      <div class="blessings__inner">
+        <p class="blessings__lead reveal">Two hearts, two families</p>
+        <p class="blessings__script reveal">one beautiful journey begins</p>
+
+        <article class="family__card reveal">
+          <span class="family__ornament family__ornament--top">✦ ❦ ✦</span>
+          <span class="family__role">The Bride</span>
+          <h3 class="family__name">Amee</h3>
+          <p class="family__rel">D/O Kishorbhai &amp; Seemaben</p>
+          <p class="family__surname"><i></i>Kasondra<i></i></p>
+        </article>
+
+        <div class="family__knot reveal">
+          <span class="family__knot-line"></span>
+          <span class="family__knot-heart">♥</span>
+          <span class="family__knot-line"></span>
+        </div>
+
+        <article class="family__card reveal">
+          <span class="family__ornament family__ornament--top">✦ ❦ ✦</span>
+          <span class="family__role">The Groom</span>
+          <h3 class="family__name">Ridham</h3>
+          <p class="family__rel">S/O Rameshbhai &amp; Hansaben</p>
+          <p class="family__surname"><i></i>Sherathiya<i></i></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ═══════════════ EVENT 1 · MANDVO ═══════════════ -->
+    <section class="event panel" id="mandvo" data-theme="mandvo">
+      <div class="event__inner">
+        <header class="event__head">
+          <span class="event__no">01</span>
+          <p class="event__guj">માંડવો</p>
+          <h2 class="event__title"><span>M</span><span>a</span><span>n</span><span>d</span><span>v</span><span>o</span></h2>
+          <p class="event__sub">The auspicious beginning</p>
+        </header>
+
+        <figure class="event__card tilt-card">
+          <div class="event__card-frame">
+            <video class="event__media" poster="img/mandvo.jpg" muted loop playsinline preload="none" aria-label="Mandvo decoration — green foliage with white flowers swaying in the breeze">
+              <source src="video/mandvo.mp4" type="video/mp4" />
+            </video>
+            <span class="event__card-shine"></span>
+          </div>
+          <span class="event__card-border"></span>
+        </figure>
+
+        <div class="event__details">
+          <div class="detail">
+            <span class="detail__icon">✦</span>
+            <div><b>Thursday, 28 January 2027</b><i>Morning · 9:00 AM</i></div>
+          </div>
+          <div class="detail detail--attire">
+            <span class="detail__icon">✿</span>
+            <div>
+              <b>Attire</b>
+              <span class="attire__row"><em>His</em> Kurta with Koti</span>
+              <span class="attire__row"><em>Her</em> Bandhani <span class="attire__opt">· optional</span></span>
+            </div>
+          </div>
+          <p class="event__desc">
+            Under a canopy of fresh greens and white blooms, the sacred
+            mandvo is raised — Lord Ganesha is invoked and the
+            celebrations officially begin.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ EVENT 2 · HALDI ═══════════════ -->
+    <section class="event panel" id="haldi" data-theme="haldi">
+      <div class="event__inner">
+        <header class="event__head">
+          <span class="event__no">02</span>
+          <p class="event__guj">હળદી</p>
+          <h2 class="event__title"><span>H</span><span>a</span><span>l</span><span>d</span><span>i</span></h2>
+          <p class="event__sub">A golden glow of blessings</p>
+        </header>
+
+        <figure class="event__card tilt-card">
+          <div class="event__card-frame">
+            <video class="event__media" poster="img/haldi.jpg" muted loop playsinline preload="none" aria-label="Haldi decoration — purple drapes and flowers moving gently">
+              <source src="video/haldi.mp4" type="video/mp4" />
+            </video>
+            <span class="event__card-shine"></span>
+          </div>
+          <span class="event__card-border"></span>
+        </figure>
+
+        <div class="event__details">
+          <div class="detail">
+            <span class="detail__icon">✦</span>
+            <div><b>Thursday, 28 January 2027</b><i>Morning · 11:00 AM</i></div>
+          </div>
+          <div class="detail detail--attire">
+            <span class="detail__icon">✿</span>
+            <div>
+              <b>Attire</b>
+              <span class="attire__swatches">
+                <i style="--c:#f5b9c3"></i>
+                <i style="--c:#abdcbb"></i>
+                <i style="--c:#a9c6e8"></i>
+              </span>
+              <span class="attire__row">Blush Pink · Mint Green · Powder Blue</span>
+            </div>
+          </div>
+          <p class="event__desc">
+            Amidst violet drapes and orchid strings, turmeric and
+            laughter are showered on the bride and groom — for luck,
+            for glow, for love.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ EVENT 3 · SANJI ═══════════════ -->
+    <section class="event panel" id="sangeet" data-theme="sangeet">
+      <div class="event__inner">
+        <header class="event__head">
+          <span class="event__no">03</span>
+          <p class="event__guj">સાંજી</p>
+          <h2 class="event__title"><span>S</span><span>a</span><span>n</span><span>j</span><span>i</span></h2>
+          <p class="event__sub">A night of music &amp; garba</p>
+        </header>
+
+        <figure class="event__card tilt-card">
+          <div class="event__card-frame">
+            <video class="event__media" poster="img/sangeet.jpg" muted loop playsinline preload="none" aria-label="Sanji decoration — golden fairy lights twinkling">
+              <source src="video/sangeet.mp4" type="video/mp4" />
+            </video>
+            <span class="event__card-shine"></span>
+          </div>
+          <span class="event__card-border"></span>
+        </figure>
+
+        <div class="event__details">
+          <div class="detail">
+            <span class="detail__icon">✦</span>
+            <div><b>Thursday, 28 January 2027</b><i>Evening · 7:00 PM</i></div>
+          </div>
+          <div class="detail detail--attire">
+            <span class="detail__icon">✿</span>
+            <div>
+              <b>Attire</b>
+              <span class="attire__row"><em>His</em> Jodhpuri / Kurta / Indo-western</span>
+              <span class="attire__row"><em>Her</em> Choli / Saree</span>
+            </div>
+          </div>
+          <p class="event__desc">
+            When the sun sets, a thousand golden lights take over —
+            dhol, garba and sangeet under a glittering night sky.
+            Bring your best moves.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ EVENT 4 · LAGAN ═══════════════ -->
+    <section class="event panel" id="lagan" data-theme="lagan">
+      <div class="event__inner">
+        <header class="event__head">
+          <span class="event__no">04</span>
+          <p class="event__guj">લગ્ન</p>
+          <h2 class="event__title"><span>L</span><span>a</span><span>g</span><span>a</span><span>n</span></h2>
+          <p class="event__sub">The wedding ceremony</p>
+        </header>
+
+        <figure class="event__card tilt-card">
+          <div class="event__card-frame">
+            <video class="event__media" poster="img/lagan.jpg" muted loop playsinline preload="none" aria-label="Wedding mandap covered in flowers with petals falling">
+              <source src="video/lagan.mp4" type="video/mp4" />
+            </video>
+            <span class="event__card-shine"></span>
+          </div>
+          <span class="event__card-border"></span>
+        </figure>
+
+        <div class="event__details">
+          <div class="detail">
+            <span class="detail__icon">✦</span>
+            <div><b>Friday, 29 January 2027</b><i>Evening · 7:00 PM</i></div>
+          </div>
+          <div class="detail detail--attire">
+            <span class="detail__icon">✿</span>
+            <div>
+              <b>Attire</b>
+              <span class="attire__row"><em>His</em> Blazer / Jodhpuri / Kurta / Indo-western</span>
+              <span class="attire__row"><em>Her</em> Silk Saree / Choli</span>
+            </div>
+          </div>
+          <p class="event__desc">
+            Beneath a mandap woven entirely of flowers, Amee and Ridham
+            take the four sacred pheras — four vows,
+            one lifetime together.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ VENUE ═══════════════ -->
+    <section class="venue panel" id="venue">
+      <div class="venue__inner">
+        <span class="venue__flourish">❦</span>
+        <h2 class="venue__title reveal">The Venue</h2>
+        <p class="venue__name reveal">OTB Rajkot</p>
+        <p class="venue__addr reveal">
+          Nyari Dam 1 Road, Kalavad Road,<br />
+          Rajkot, Gujarat — 360005
+        </p>
+        <a
+          class="venue__btn reveal"
+          href="https://maps.app.goo.gl/QFzkhYbJTUQ63Zko6"
+          target="_blank"
+          rel="noopener"
+        >
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11Z" />
+            <circle cx="12" cy="10" r="2.6" />
+          </svg>
+          Get Directions
+        </a>
+        <p class="venue__note reveal">All four events will be held at the same venue.</p>
+
+        <div class="venue__closing reveal">
+          <span class="venue__closing-rule"></span>
+          <p class="footer__guj">આપના આશીર્વાદ એ જ અમારી શોભા</p>
+          <p class="footer__text">Your presence &amp; blessings are the greatest gift.</p>
+          <h3 class="footer__names">Amee <em>♥</em> Ridham</h3>
+          <p class="footer__date">28 &amp; 29 January 2027 — Rajkot</p>
+
+          <div class="socials">
+            <p class="socials__label">Follow our journey for more</p>
+            <div class="socials__row">
+              <a class="socials__link" href="https://www.instagram.com/ridham_amee?igsh=cWw3Zmhlb3pkYXNx" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+                  <circle cx="12" cy="12" r="4.2" />
+                  <circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none" />
+                </svg>
+                Instagram
+              </a>
+              <a class="socials__link" href="https://youtube.com/@ameeridhamdiaries?si=nAXrwoH3UIxVzgka" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2.7 12c0-2.8 0-4.2.6-5.2a4 4 0 0 1 1.5-1.5C5.8 4.7 7.2 4.7 10 4.7h4c2.8 0 4.2 0 5.2.6a4 4 0 0 1 1.5 1.5c.6 1 .6 2.4.6 5.2s0 4.2-.6 5.2a4 4 0 0 1-1.5 1.5c-1 .6-2.4.6-5.2.6h-4c-2.8 0-4.2 0-5.2-.6a4 4 0 0 1-1.5-1.5c-.6-1-.6-2.4-.6-5.2Z" />
+                  <path d="M10 9.2l4.8 2.8-4.8 2.8V9.2Z" fill="currentColor" stroke="none" />
+                </svg>
+                YouTube
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/vendor/gsap.min.js"></script>
+  <script src="js/vendor/ScrollTrigger.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
