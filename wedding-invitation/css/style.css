@@ -602,7 +602,7 @@ main { position: relative; z-index: 2; }
   height: 100svh;
   display: flex;
   align-items: center;
-  padding: 50px 0 22px;
+  padding: 46px 0 14px;
   perspective: 1000px;
   overflow: hidden;
 }
@@ -677,7 +677,7 @@ main { position: relative; z-index: 2; }
   margin: 0 auto 2.4svh;
   transform-style: preserve-3d;
   /* card height adapts to the screen so every event always fits one page */
-  width: min(100%, calc(clamp(230px, 100svh - 430px, 460px) * 0.8));
+  width: min(100%, calc(clamp(200px, 100svh - 465px, 440px) * 0.8));
 }
 
 .event__card-frame {
@@ -759,13 +759,56 @@ main { position: relative; z-index: 2; }
   margin-top: 3px;
 }
 
-.event__desc {
-  font-size: 0.99rem;
+/* attire block */
+
+.detail--attire { margin-bottom: 8px; }
+
+.attire__row {
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  margin-top: 3px;
+  line-height: 1.45;
+}
+
+.attire__row em {
+  font-style: normal;
+  font-family: var(--font-caps);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent, var(--gold));
+  margin-right: 5px;
+}
+
+.attire__opt {
   font-style: italic;
-  line-height: 1.6;
+  font-size: 0.82rem;
+  opacity: 0.75;
+}
+
+.attire__swatches {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  margin: 6px 0 2px;
+}
+
+.attire__swatches i {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--c);
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.event__desc {
+  font-size: 0.96rem;
+  font-style: italic;
+  line-height: 1.55;
   color: var(--ink-soft);
   max-width: 320px;
-  margin: 4px auto 0;
+  margin: 2px auto 0;
   text-align: center;
 }
 
